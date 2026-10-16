@@ -73,7 +73,8 @@ def compare(x, ref):
     if not np.isfinite(x):
         return "no demo value"
     lo, hi = ref["rmse_min_m"], ref["rmse_max_m"]
-    if lo <= x <= hi:
+    tol = 0.0005   # the table shows millimetres; the paper values are stored to 0.1 mm
+    if lo - tol <= x <= hi + tol:
         return f"inside the range of the paper's {int(ref['n_runs'])} runs"
     d = x - hi if x > hi else lo - x
     return f"{'above' if x > hi else 'below'} the paper's range by {d:.3f} m"
