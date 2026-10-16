@@ -5,8 +5,8 @@
 #   make venv                      evaluation environment from env/requirements-eval.lock.txt
 #   make demo-check                prerequisites, images and the demo bag; no runs
 #   make demo                      six methods on CitrusFarm 06, evaluated as in the paper (~45 min)
-#   make demo METHODS="lego dlo"   a subset; also BAG=, SEQ=, OUT=, DURATION=, DEMO_DATA_DIR=
-#                                  (demo/config.sh)
+#   make demo METHODS="lego dlo"   a subset; also BAG=, SEQ=, OUT=, DURATION=, DEMO_DATA_DIR=,
+#                                  CPUSET_METHOD=, CPUSET_INFRA= (demo/config.sh)
 #   make test                      unit and pipeline tests
 #
 # Benchmark campaign (as run for the paper; needs the full datasets and days of machine time):
@@ -58,7 +58,8 @@ images:
 # ----------------------------------------------------------------- demo
 # Variables are passed on explicitly; empty ones take the defaults of demo/config.sh.
 DEMO_ENV = METHODS="$(METHODS)" BAG="$(BAG)" SEQ="$(SEQ)" OUT="$(OUT)" DURATION="$(DURATION)" \
-           DEMO_DATA_DIR="$(DEMO_DATA_DIR)" SKIP_CHECKSUM="$(SKIP_CHECKSUM)"
+           DEMO_DATA_DIR="$(DEMO_DATA_DIR)" SKIP_CHECKSUM="$(SKIP_CHECKSUM)" \
+           CPUSET_METHOD="$(CPUSET_METHOD)" CPUSET_INFRA="$(CPUSET_INFRA)"
 
 demo: venv
 	$(DEMO_ENV) ./demo/run_demo.sh

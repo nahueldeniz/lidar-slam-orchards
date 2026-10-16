@@ -161,6 +161,7 @@ trap on_signal INT TERM
 
 n=${#METHOD_LIST[@]}
 log "4/6 runs: ${METHOD_LIST[*]} on $SEQ (real-time playback${DURATION:+, first $DURATION s only}; about 6 min each)"
+log "  CPU pinning: method ${CPUSET_METHOD:-not pinned}, infrastructure ${CPUSET_INFRA:-not pinned} (CPUSET_METHOD, CPUSET_INFRA)"
 failed=()
 i=0
 for m in "${METHOD_LIST[@]}"; do
@@ -169,6 +170,8 @@ for m in "${METHOD_LIST[@]}"; do
   args=(--demo --method "$m" --seq "$SEQ" --config D --rep 1 --bag "$BAG_ABS"
         --image "${IMG[$m]}" --infra-image "${IMG[infra]}" --out-root "$OUT_ABS/runs")
   [ -n "$DURATION" ] && args+=(--dry-run-seconds "$DURATION")
+  [ -n "$CPUSET_METHOD" ] && args+=(--cpuset-method "$CPUSET_METHOD")
+  [ -n "$CPUSET_INFRA" ] && args+=(--cpuset-infra "$CPUSET_INFRA")
   set +e
   .venv/bin/python scripts/run_one.py "${args[@]}" > "$OUT_ABS/logs/run_$m.log" 2>&1
   rc=$?

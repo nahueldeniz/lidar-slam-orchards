@@ -34,6 +34,13 @@ BAG="${BAG:-}"
 # Set SKIP_CHECKSUM=1 to skip the MD5 check of an already downloaded demo bag (about 5 s).
 SKIP_CHECKSUM="${SKIP_CHECKSUM:-}"
 
+# Optional CPU pinning (docker --cpuset-cpus), empty = none (default; portable). The paper
+# pinned the method to the performance cores and the infrastructure (roscore, playback,
+# recorder) to the efficiency cores of its Intel i7-13620H: CPUSET_METHOD=0-11 CPUSET_INFRA=12-15.
+# DLO depends on it: its NanoGICP uses one OpenMP thread per CPU of the container.
+CPUSET_METHOD="${CPUSET_METHOD:-}"
+CPUSET_INFRA="${CPUSET_INFRA:-}"
+
 # ---------------------------------------------------------------- images and disk
 # Image names: demo/images.conf (registry name and local build tag per method).
 IMAGES_CONF="${IMAGES_CONF:-demo/images.conf}"

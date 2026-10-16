@@ -192,6 +192,17 @@ def main():
              f"Docker {mi.get('docker', '?')}.")
     L.append("- Paper's machine: Intel Core i7-13620H laptop (16 logical CPUs, 15.2 GiB memory), "
              "with the method pinned to the 12 logical CPUs of the performance cores.")
+    pins = set()
+    for r in rows:
+        mf_ = out / "runs" / r["method"] / seq / "D" / "rep1" / "manifest.json"
+        if mf_.exists():
+            cs = (json.loads(mf_.read_text()).get("checks") or {}).get("cpuset") or {}
+            pins.add((cs.get("method"), cs.get("infra")))
+    if pins:
+        pin_txt = "; ".join("no CPU pinning" if p == (None, None) else
+                            f"method container on CPUs {p[0] or 'any'}, infrastructure on CPUs {p[1] or 'any'}"
+                            for p in sorted(pins, key=str))
+        L.append(f"- CPU pinning in this demo: {pin_txt}.")
     played = f"the first {args.duration:g} s" if args.duration else "the whole bag (302 s)"
     L.append(f"- Each method ran once, configuration D, LiDAR topic only, real-time playback of {played}.")
     if has_gt:
@@ -253,6 +264,12 @@ def how_to_read(refs):
              "each method processes the scans as they arrive. A slower or busier machine makes a method "
              "skip or delay scans (see the processed-scan ratio), which can change its trajectory. Other "
              "programs running during the demo have the same effect.")
+    if "dlo" in refs:
+        L.append("- **CPU pinning matters for DLO.** Its NanoGICP registration uses one OpenMP thread per "
+                 "CPU of the container, and its sums depend on the number of threads. Without pinning, "
+                 "DLO runs with all logical CPUs (16 on the paper's laptop instead of 12). To pin the "
+                 "containers as in the paper on a similar hybrid CPU: "
+                 "`make demo CPUSET_METHOD=0-11 CPUSET_INFRA=12-15`.")
     text = ("- **Run-to-run spread is expected.** Several methods are not deterministic under real-time "
             "playback. In the paper, the three runs on the same machine gave "
             + "; ".join(f"{r['label']} {runs(r)} m" for r in wide)
@@ -261,7 +278,7 @@ def how_to_read(refs):
     if narrow:
         text += (" " + " and ".join(r["label"] for r in narrow) + " gave the same value to within "
                  "1 mm in all three runs; their range is therefore very narrow, and on another machine "
-                 "a value a few millimetres outside it is still consistent with the paper.")
+                 "a value about a centimetre outside it is still consistent with the paper.")
     L.append(text)
     L.append("- The paper reports three runs per method on four CitrusFarm sequences and one Pullally "
              "sequence; the demo is one run on one sequence. It shows that the pipeline works on your "

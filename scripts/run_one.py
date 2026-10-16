@@ -22,7 +22,11 @@ configuration must still match configs/FROZEN.json and, for compile-time
 methods, the image label. A playback lag above max_playback_lag_s is recorded
 in manifest.json but does not mark the run as an infrastructure fault.
 Options for the demo (and dry runs): --bag (play these files instead of the
-registry's bags), --image and --infra-image (registry names), --out-root.
+registry's bags), --image and --infra-image (registry names), --out-root, and
+--cpuset-method / --cpuset-infra to pin the containers as in the paper (e.g.
+0-11 and 12-15 on its hybrid CPU). Pinning matters for DLO: NanoGICP uses as
+many OpenMP threads as the container has CPUs, and its reductions depend on
+the thread count (configs/dlo/source_verification.md).
 """
 import argparse
 import hashlib
@@ -99,6 +103,9 @@ class Run:
                        [C_INFRA, "/ros_entrypoint.sh"] + list(cmd), check=check, timeout=timeout)
 
     def cpuset(self, role):
+        override = getattr(self.args, f"cpuset_{role}", None)
+        if override:
+            return ["--cpuset-cpus", override]
         if getattr(self.args, "no_cpuset", False) or self.demo:
             return []
         cs = self.settings.get("cpuset", {}).get(role)
@@ -169,7 +176,9 @@ class Run:
         except json.JSONDecodeError:
             self.manifest["host_state_start"] = None
         self.manifest["checks"].update({"profile": "demo", "idle_check_skipped": True,
-                                        "power_settings_checked": False, "cpuset": None})
+                                        "power_settings_checked": False,
+                                        "cpuset": {"method": self.args.cpuset_method or None,
+                                                   "infra": self.args.cpuset_infra or None}})
 
     def bag_mounts(self):
         """(docker -v arguments, paths of the bags inside the infrastructure
@@ -613,6 +622,9 @@ def main():
     ap.add_argument("--infra-image", help=f"infrastructure image (default {INFRA_IMAGE})")
     ap.add_argument("--out-root", help="folder for <method>/<seq>/<config>/rep<r>/ "
                                        "(default runs/, or runs_dry/ for dry and demo runs)")
+    ap.add_argument("--cpuset-method", metavar="CPUS", help="pin the method container (docker "
+                    "--cpuset-cpus), e.g. 0-11; overrides env/run_settings.yaml")
+    ap.add_argument("--cpuset-infra", metavar="CPUS", help="pin the infrastructure container, e.g. 12-15")
     args = ap.parse_args()
     if args.demo:
         if args.phase not in (None, "demo"):
