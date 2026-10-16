@@ -27,6 +27,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import yaml
 
 R = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(R / "eval"))
@@ -105,6 +106,10 @@ def main():
     refs = {r["method"]: r for r in pd.read_csv(ref_file).to_dict("records")} if ref_file.exists() else {}
     diag = ctx.table("run_diagnostics")
     res = ctx.table("resources_summary")
+    # The paper set aside runs whose playback fell behind the bag timeline by more than this
+    # (an infrastructure fault: busy or frozen machine, slow disk), and repeated them.
+    max_lag = yaml.safe_load((R / "env" / "run_settings.yaml").read_text()).get("max_playback_lag_s", 0.5)
+    faults = []
 
     rows = []
     for m in methods:
@@ -119,7 +124,12 @@ def main():
         man = json.loads(man_f.read_text())
         row["run_status"] = man.get("status")
         row["run_time_s"] = round(man["end"] - man["start"], 1) if man.get("end") and man.get("start") else np.nan
-        row["playback_max_lag_s"] = (man.get("playback_quality") or {}).get("max_lag_s")
+        q = man.get("playback_quality") or {}
+        row["playback_max_lag_s"] = q.get("max_lag_s")
+        row["playback_ok"] = bool(q.get("ok")) and num(q.get("max_lag_s")) <= max_lag
+        if row["run_status"] == "ok" and not row["playback_ok"]:
+            row["run_status"] = "playback fault"
+            faults.append((m, num(q.get("max_lag_s"))))
         row["image"] = (man.get("image") or {}).get("name")
         d = diag[(diag["method"] == m) & (diag["seq"] == seq) & (diag["output"] == hl) & (diag["rep"] == 1)] \
             if diag is not None else pd.DataFrame()
@@ -149,7 +159,8 @@ def main():
                         "paper_rmse_runs_m": ref["rmse_runs_m"],
                         "paper_processed_scan_ratio": ref["processed_scan_ratio_mean"]})
             row["diff_to_paper_mean_m"] = row["rmse_3d_m"] - ref["rmse_mean_m"]
-        row["vs_paper"] = ("partial run (not comparable)" if args.duration else
+        row["vs_paper"] = ("not comparable (playback fault)" if not row["playback_ok"] else
+                           "partial run (not comparable)" if args.duration else
                            compare(row["rmse_3d_m"], ref) if has_gt else "no ground truth")
         rows.append(row)
     df = pd.DataFrame(rows)
@@ -233,6 +244,13 @@ def main():
                  f"| {r['label']} | {demo} | {paper} | {runs} | {r.get('vs_paper', '')} | N/A ({pp}) | "
                  f"{r.get('run_status')} |")
     L.append("")
+    if faults:
+        L.append("**Playback fault:** " + "; ".join(f"{LABEL[m]} (playback fell {lag:.1f} s behind the bag)"
+                                                    for m, lag in faults)
+                 + f". The bag was not replayed in real time (the paper set aside every run with a lag "
+                 f"above {max_lag} s and repeated it): the machine was too busy, short of memory or "
+                 "froze. These values are not comparable. Close other programs and run the method "
+                 "again, e.g. `make demo METHODS=\"" + " ".join(m for m, _ in faults) + "\"`.\n")
     if fig_ok:
         L.append(f"![Top view of the trajectories]({fig_name}.png)\n")
         L.append(f"`{fig_name}.png` / `.pdf`: top view, one panel per method (aligned with alignment A) "
@@ -253,6 +271,9 @@ def main():
     print(f"-> {out / 'results.csv'}, {out / 'results.md'}" + (f", {out / fig_name}.png/.pdf" if fig_ok else ""))
     for n in sorted(ctx.notes):
         print(f"note: {n}")
+    for m, lag in faults:
+        print(f"WARNING: {LABEL[m]}: playback fell {lag:.1f} s behind the bag (limit {max_lag} s): "
+              f"not comparable; run it again with fewer programs open (make demo METHODS={m})")
 
 
 def how_to_read(refs):
