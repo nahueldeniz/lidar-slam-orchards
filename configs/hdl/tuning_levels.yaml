@@ -1,0 +1,131 @@
+# DRAFT - NOT FROZEN. hdl Graph SLAM tuning parameters and levels (brief Section 5.0, steps 1-2).
+# Rationale and citations: configs/hdl/tuning_rationale.md. Do not run before Nahuel approves this draft.
+status: DRAFT
+method: hdl
+date: 2026-10-12
+source: koide3/hdl_graph_slam@95b8dce41c10667dcf0e3e9801dc22754b3bd525
+base_config: configs/hdl/D/hdl_D.launch
+apply_as: "roslaunch hdl_D.launch sensor_height:=<dataset> tilt_deg:=<dataset> [lidar_frame_id:=<bag frame>] <launch_arg>:=<level>"
+tuning_sequences: [cf_4, cf_5]
+
+level_rule: >-
+  Each parameter gets two alternative levels: x0.5 and x2 of the D value. A level is replaced by a
+  submitted P1-P3 value lying on the same side of the default within a factor of 3, choosing the one
+  closest in ratio to x0.5 (or x2). Values that only switch a mechanism off are stated as such.
+  Submitted values for rows c/d use the brief's proposed mapping (same value in both nodelets).
+
+parameters:
+  - id: a
+    brief_row: "5.1 a"
+    name: downsample_resolution (prefiltering voxel leaf)
+    launch_arg: downsample_resolution
+    ros_params: [/prefiltering_nodelet/downsample_resolution]
+    unit: m
+    type: continuous
+    affects: FE+BE
+    default: 0.1
+    levels:
+      - {value: 0.05, origin: "x0.5"}
+      - {value: 0.3,  origin: "submitted P3 (x3), replaces x2 = 0.2"}
+    submitted: {P1: 0.1, P2: 0.5, P3: 0.3}
+    limits: {min: 0.05, max: 0.5}
+
+  - id: b
+    brief_row: "5.1 b"
+    name: radius_radius (prefiltering radius outlier removal, method RADIUS, min neighbours 2)
+    launch_arg: radius_radius
+    ros_params: [/prefiltering_nodelet/radius_radius]
+    unit: m
+    type: continuous
+    affects: FE+BE
+    default: 0.5
+    levels:
+      - {value: 0.25, origin: "x0.5"}
+      - {value: 1.0,  origin: "x2 = submitted P2"}
+    submitted: {P1: 0.5, P2: 1.0, P3: 0.75}
+    limits: {min: 0.25, max: 1.0}
+
+  - id: c_fe
+    brief_row: "5.1 c (front-end part)"
+    name: keyframe_delta_trans (scan_matching_odometry_nodelet)
+    launch_arg: fe_keyframe_delta_trans
+    ros_params: [/scan_matching_odometry_nodelet/keyframe_delta_trans]
+    unit: m
+    type: continuous
+    affects: FE+BE
+    default: 1.0
+    levels:
+      - {value: 0.5, origin: "x0.5 = submitted P1"}
+      - {value: 2.0, origin: "x2"}
+    submitted: {P1: 0.5, P2: 1.0, P3: 0.75}
+    limits: {min: 0.25, max: 5.0}
+
+  - id: c_be
+    brief_row: "5.1 c (back-end part)"
+    name: keyframe_delta_trans (hdl_graph_slam_nodelet)
+    launch_arg: be_keyframe_delta_trans
+    ros_params: [/hdl_graph_slam_nodelet/keyframe_delta_trans]
+    unit: m
+    type: continuous
+    affects: BE
+    default: 2.0
+    levels:
+      - {value: 1.0, origin: "x0.5 = submitted P2 (also hdl_graph_slam_501.launch, hdl_graph_slam_imu.launch)"}
+      - {value: 4.0, origin: "x2"}
+    submitted: {P1: 0.5, P2: 1.0, P3: 0.75}
+    limits: {min: 1.0, max: 5.0}
+
+  - id: d_fe
+    brief_row: "5.1 d (front-end part)"
+    name: keyframe_delta_angle (scan_matching_odometry_nodelet; compared with acos(q.w) = half the rotation angle)
+    launch_arg: fe_keyframe_delta_angle
+    ros_params: [/scan_matching_odometry_nodelet/keyframe_delta_angle]
+    unit: rad (half-angle)
+    type: continuous
+    affects: FE+BE
+    default: 1.0          # triggers at a 2.0 rad (115 deg) rotation
+    levels:
+      - {value: 0.5, origin: "x0.5 = submitted P1; triggers at 1.0 rad (57 deg)"}
+      - {value: 2.0, origin: "x2 = FE value in hdl_graph_slam_kitti.launch and hdl_graph_slam_imu.launch; >= pi/2, so rotation never triggers a keyframe (translation only)"}
+    submitted: {P1: 0.5, P2: 1.0, P3: 0.75}
+    limits: {min: 0.25, max: 2.0}
+
+  - id: d_be
+    brief_row: "5.1 d (back-end part)"
+    name: keyframe_delta_angle (hdl_graph_slam_nodelet; full angle-axis angle)
+    launch_arg: be_keyframe_delta_angle
+    ros_params: [/hdl_graph_slam_nodelet/keyframe_delta_angle]
+    unit: rad
+    type: continuous
+    affects: BE
+    default: 2.0
+    levels:
+      - {value: 1.0, origin: "x0.5 = submitted P2"}
+      - {value: 4.0, origin: "x2; > pi, so rotation never triggers a graph node (translation only)"}
+    submitted: {P1: 0.5, P2: 1.0, P3: 0.75}
+    limits: {min: 0.5, max: 4.0}
+
+  - id: f
+    brief_row: "5.1 f"
+    name: reg_max_correspondence_distance (FAST_GICP correspondence gate, both nodelets, kept equal as upstream)
+    launch_arg: reg_max_correspondence_distance
+    ros_params: [/scan_matching_odometry_nodelet/reg_max_correspondence_distance, /hdl_graph_slam_nodelet/reg_max_correspondence_distance]
+    unit: m
+    type: continuous
+    affects: FE+BE
+    default: 2.0
+    levels:
+      - {value: 1.0, origin: "x0.5"}
+      - {value: 3.0, origin: "submitted P2 (x1.5), replaces x2 = 4.0"}
+    submitted: {P1: 2.0, P2: 3.0, P3: 2.5}
+    limits: {min: 0.5, max: 5.0}
+
+excluded:
+  - {name: registration_method, brief_row: "5.1 e", reason: "fixed to FAST_GICP by the brief"}
+  - {name: sensor_height, brief_row: "5.1 h", reason: "sensor setting, set per dataset (0.5317 m Pullally; CitrusFarm per C4)"}
+  - {name: tilt_deg, brief_row: "5.1 g", reason: "sensor-mounting setting (LiDAR pitch), set per dataset like sensor_height; PROPOSED exclusion, see open questions"}
+
+run_budget:
+  one_at_a_time_runs: 28        # 7 parameters x 2 levels x 2 tuning sequences, 1 repetition
+  default_runs: 4               # D once on cf_4, D three times on cf_5 (run-to-run spread)
+  approx_playback_hours: 6.8    # (28 + 4) x ~12.7 min, plus cool-down and set-up

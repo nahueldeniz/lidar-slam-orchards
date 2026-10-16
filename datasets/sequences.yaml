@@ -1,0 +1,186 @@
+# Sequence registry (brief Section 4). Bag paths are relative to the data root.
+#
+# Data root (where the LiDAR bags are), in order of precedence:
+#   1. the environment variable SLAMBENCH_DATA, e.g. SLAMBENCH_DATA=/mnt/bags
+#   2. data_root below (null = not set)
+#   3. default: this folder (datasets/)
+# gt_bag paths are always relative to datasets/.
+# The bag paths below follow the layout written by datasets/download_citrusfarm.sh
+# (<data root>/citrusfarm/raw/<folder>/base_*.bag) and, for Pullally run 1,
+# <data root>/pullally/DS_P1_20230806/<file>.bag (see README.md, "Datasets").
+# Public-release note: the measured runs read the same files from a different local
+# folder layout on the authors' drive (as recorded in each run's manifest.json,
+# play_command); the CitrusFarm files were checked against the
+# official MD5 sums (datasets/local_copies_md5.json).
+data_root: null
+
+sequences:
+  cf_2:
+    dataset: citrusfarm
+    folder: 02_13B_Jackal
+    role: test
+    lidar_topic: /velodyne_points
+    bags:   # chronological order (file name = recording start time)
+      - "citrusfarm/raw/02_13B_Jackal/base_2023-07-18-14-51-21_0.bag"
+    gt_bag: citrusfarm/ground_truth/02_13B_Jackal/gt.bag
+    gt_topic: /gps/fix/odometry
+    gt_nominal_period_s: 0.1
+    lever_arm_lidar_to_antenna_m: [-0.220, 0.000, 0.153]   # 04-lidar-gps-result.txt (CAD)
+    lidar_forward_axis: [1, 0, 0]   # LiDAR x = robot forward (identity base_link->LiDAR rotation)
+    sensor:
+      sensor_height: 0.43          # hdl floor detection (Q7): median of the RANSAC estimates 0.418-0.440 m (datasets/lidar_height_cf_*.json), 1.2 cm below the calibration route (0.442 m)
+      tilt_deg: 0                  # hdl floor detection: LiDAR pitch; identity rotation base_link->LiDAR (05-baselink-lidar-result.txt)
+      lidar_frame_id: velodyne     # header.frame_id of the LiDAR messages (checked on the first scan), for hdl
+      scan_period: 0.1             # to be confirmed from the inventory
+
+  cf_3:
+    dataset: citrusfarm
+    folder: 03_13B_Jackal
+    role: test
+    lidar_topic: /velodyne_points
+    bags:   # chronological order (file name = recording start time)
+      - "citrusfarm/raw/03_13B_Jackal/base_2023-07-16-19-17-20_0.bag"
+      - "citrusfarm/raw/03_13B_Jackal/base_2023-07-16-19-26-21_1.bag"
+      - "citrusfarm/raw/03_13B_Jackal/base_2023-07-16-19-35-22_2.bag"
+      - "citrusfarm/raw/03_13B_Jackal/base_2023-07-16-19-44-22_3.bag"
+    gt_bag: citrusfarm/ground_truth/03_13B_Jackal/gt.bag
+    gt_topic: /gps/fix/odometry
+    gt_nominal_period_s: 0.1
+    lever_arm_lidar_to_antenna_m: [-0.220, 0.000, 0.153]   # 04-lidar-gps-result.txt (CAD)
+    lidar_forward_axis: [1, 0, 0]   # LiDAR x = robot forward (identity base_link->LiDAR rotation)
+    sensor:
+      sensor_height: 0.43          # hdl floor detection (Q7): median of the RANSAC estimates 0.418-0.440 m (datasets/lidar_height_cf_*.json), 1.2 cm below the calibration route (0.442 m)
+      tilt_deg: 0                  # hdl floor detection: LiDAR pitch; identity rotation base_link->LiDAR (05-baselink-lidar-result.txt)
+      lidar_frame_id: velodyne     # header.frame_id of the LiDAR messages (checked on the first scan), for hdl
+      scan_period: 0.1             # to be confirmed from the inventory
+
+  cf_6:
+    dataset: citrusfarm
+    folder: 06_14B_Jackal
+    role: test
+    lidar_topic: /velodyne_points
+    bags:   # chronological order (file name = recording start time)
+      - "citrusfarm/raw/06_14B_Jackal/base_2023-07-18-14-29-35_0.bag"
+    gt_bag: citrusfarm/ground_truth/06_14B_Jackal/gt.bag
+    gt_topic: /gps/fix/odometry
+    gt_nominal_period_s: 0.1
+    lever_arm_lidar_to_antenna_m: [-0.220, 0.000, 0.153]   # 04-lidar-gps-result.txt (CAD)
+    lidar_forward_axis: [1, 0, 0]   # LiDAR x = robot forward (identity base_link->LiDAR rotation)
+    sensor:
+      sensor_height: 0.43          # hdl floor detection (Q7): median of the RANSAC estimates 0.418-0.440 m (datasets/lidar_height_cf_*.json), 1.2 cm below the calibration route (0.442 m)
+      tilt_deg: 0                  # hdl floor detection: LiDAR pitch; identity rotation base_link->LiDAR (05-baselink-lidar-result.txt)
+      lidar_frame_id: velodyne     # header.frame_id of the LiDAR messages (checked on the first scan), for hdl
+      scan_period: 0.1             # to be confirmed from the inventory
+
+  cf_7:
+    dataset: citrusfarm
+    folder: 07_14B_Jackal
+    role: test
+    lidar_topic: /velodyne_points
+    bags:   # chronological order (file name = recording start time)
+      - "citrusfarm/raw/07_14B_Jackal/base_2023-07-16-18-31-20_0.bag"
+      - "citrusfarm/raw/07_14B_Jackal/base_2023-07-16-18-39-54_1.bag"
+    gt_bag: citrusfarm/ground_truth/07_14B_Jackal/gt.bag
+    gt_topic: /gps/fix/odometry
+    gt_nominal_period_s: 0.1
+    lever_arm_lidar_to_antenna_m: [-0.220, 0.000, 0.153]   # 04-lidar-gps-result.txt (CAD)
+    lidar_forward_axis: [1, 0, 0]   # LiDAR x = robot forward (identity base_link->LiDAR rotation)
+    sensor:
+      sensor_height: 0.43          # hdl floor detection (Q7): median of the RANSAC estimates 0.418-0.440 m (datasets/lidar_height_cf_*.json), 1.2 cm below the calibration route (0.442 m)
+      tilt_deg: 0                  # hdl floor detection: LiDAR pitch; identity rotation base_link->LiDAR (05-baselink-lidar-result.txt)
+      lidar_frame_id: velodyne     # header.frame_id of the LiDAR messages (checked on the first scan), for hdl
+      scan_period: 0.1             # to be confirmed from the inventory
+
+  cf_4:
+    dataset: citrusfarm
+    enabled: false   # Plan A: not used, not downloaded
+    folder: 04_13D_Jackal
+    role: tuning
+    lidar_topic: /velodyne_points
+    bags:   # chronological order (file name = recording start time)
+      - "citrusfarm/raw/04_13D_Jackal/base_2023-07-18-14-25-34_0.bag"
+      - "citrusfarm/raw/04_13D_Jackal/base_2023-07-18-14-34-05_1.bag"
+    gt_bag: citrusfarm/ground_truth/04_13D_Jackal/gt.bag
+    gt_topic: /gps/fix/odometry
+    gt_nominal_period_s: 0.1
+    lever_arm_lidar_to_antenna_m: [-0.220, 0.000, 0.153]   # 04-lidar-gps-result.txt (CAD)
+    lidar_forward_axis: [1, 0, 0]   # LiDAR x = robot forward (identity base_link->LiDAR rotation)
+    sensor:
+      sensor_height: 0.43          # hdl floor detection (Q7): median of the RANSAC estimates 0.418-0.440 m (datasets/lidar_height_cf_*.json), 1.2 cm below the calibration route (0.442 m)
+      tilt_deg: 0                  # hdl floor detection: LiDAR pitch; identity rotation base_link->LiDAR (05-baselink-lidar-result.txt)
+      lidar_frame_id: velodyne     # header.frame_id of the LiDAR messages (checked on the first scan), for hdl
+      scan_period: 0.1             # to be confirmed from the inventory
+
+  cf_5:
+    dataset: citrusfarm
+    # Sensitivity runs play only the first 380 s (~430 m, several rows and turns) to meet the
+    # Thursday 07:00 deadline (decided by Nahuel, 13 October 2026).
+    play_duration_s: 380
+    folder: 05_13D_Jackal
+    role: tuning
+    lidar_topic: /velodyne_points
+    bags:   # chronological order (file name = recording start time)
+      - "citrusfarm/raw/05_13D_Jackal/base_2023-07-16-17-05-13_0.bag"
+      - "citrusfarm/raw/05_13D_Jackal/base_2023-07-16-17-13-40_1.bag"
+    gt_bag: citrusfarm/ground_truth/05_13D_Jackal/gt.bag
+    gt_topic: /gps/fix/odometry
+    gt_nominal_period_s: 0.1
+    lever_arm_lidar_to_antenna_m: [-0.220, 0.000, 0.153]   # 04-lidar-gps-result.txt (CAD)
+    lidar_forward_axis: [1, 0, 0]   # LiDAR x = robot forward (identity base_link->LiDAR rotation)
+    sensor:
+      sensor_height: 0.43          # hdl floor detection (Q7): median of the RANSAC estimates 0.418-0.440 m (datasets/lidar_height_cf_*.json), 1.2 cm below the calibration route (0.442 m)
+      tilt_deg: 0                  # hdl floor detection: LiDAR pitch; identity rotation base_link->LiDAR (05-baselink-lidar-result.txt)
+      lidar_frame_id: velodyne     # header.frame_id of the LiDAR messages (checked on the first scan), for hdl
+      scan_period: 0.1             # to be confirmed from the inventory
+
+  pl_1:
+    dataset: pullally
+    folder: DS_P1_20230806
+    role: test
+    lidar_topic: /velodyne_points
+    # Pauses > 30 s in which no message was recorded are skipped during playback: the robot
+    # stood still across every one of them (ground-truth jump <= 2 cm), so the methods see the
+    # same motion; saves ~46 min per run. Short gaps (2-5 s, robot moving) are played normally.
+    play_skip_empty_s: 30
+    bags:   # chronological order (file name = recording start time, local time)
+      - "pullally/DS_P1_20230806/2023-08-06-10-47-21_0.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-10-50-33_1.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-10-53-38_2.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-10-56-39_3.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-10-58-57_4.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-10-59-50_0.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-11-02-17_5.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-11-03-24_1.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-11-06-49_0.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-11-09-40_1.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-11-12-44_2.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-11-15-43_3.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-11-18-31_4.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-11-19-59_0.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-11-23-48_0.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-11-26-54_1.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-11-30-01_2.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-11-33-00_3.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-11-35-41_4.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-11-56-21_0.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-12-00-20_0.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-12-03-30_1.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-12-06-46_2.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-12-09-52_3.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-12-12-51_4.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-12-15-09_0.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-12-18-23_1.bag"
+      - "pullally/DS_P1_20230806/2023-08-06-12-21-17_2.bag"
+    gt_bag: pullally/ground_truth/run1/gt.bag   # copy of DS_P1_20230806/GT/gt.bag
+    gt_topic: /fix                # NavSatFix, 2 Hz; /vo in the same bag is the same fix in UTM
+    gt_type: navsatfix            # converted to local ENU (pymap3d), origin at the first fix
+    gt_nominal_period_s: 0.5
+    lever_arm_lidar_to_antenna_m: null   # not published (OPEN_QUESTIONS.md Q6b): evaluated without
+    lidar_forward_axis: null             # LiDAR mounting yaw on the Go1 not published: no heading error
+    sensor:
+      sensor_height: 0.5317        # C4 (Nahuel)
+      tilt_deg: 0                  # RANSAC ground-plane tilt 2.7 deg (terrain + gait), treated as for CitrusFarm
+      # RANSAC height 0.460 m (datasets/lidar_height_pl_1.json) vs 0.5317 m (C4, kept): see REPORT.md
+      lidar_frame_id: velodyne     # header.frame_id of the LiDAR messages (checked on the first scan)
+      scan_period: 0.25            # 4 Hz (bag index); LOAM-family builds keep 0.1 s (REPORT.md)
+

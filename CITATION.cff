@@ -1,0 +1,56 @@
+cff-version: 1.2.0
+message: "If you use this code or these results, please cite the article (preferred-citation) and this package."
+type: software
+title: "Comparing six LiDAR-based simultaneous localisation and mapping approaches on public orchard datasets to assess the feasibility of GNSS-free autonomous machinery"
+abstract: "Code, frozen configurations and evaluation outputs (per-run and aggregated results, run diagnostics and resource logs) of a scripted benchmark of six LiDAR SLAM methods (hdl Graph SLAM, LeGO-LOAM, A-LOAM, DLO, KISS-ICP, SLAMesh) on the CitrusFarm and Pullally orchard datasets."
+version: "1.0.0"
+date-released: "2026-10-16"
+doi: "10.5281/zenodo.23405930"
+repository-code: "https://github.com/nahueldeniz/lidar-slam-orchards"
+# TODO: add the licence once chosen (see LICENSE_TO_CHOOSE.md), e.g. license: "<SPDX identifier>"
+# TODO: add each author's ORCID as  orcid: "https://orcid.org/XXXX-XXXX-XXXX-XXXX"
+authors:
+  - given-names: "Nestor"
+    family-names: "Deniz"
+    affiliation: "Harper Adams University, Newport, Shropshire, UK"
+    # orcid: "https://orcid.org/XXXX-XXXX-XXXX-XXXX"
+  - given-names: "Paola"
+    family-names: "Nazate-Burgos"
+    affiliation: "School of Engineering, Pontificia Universidad Católica de Chile, Santiago, Chile"
+    # orcid: "https://orcid.org/XXXX-XXXX-XXXX-XXXX"
+  - given-names: "Longsheng"
+    family-names: "Fu"
+    affiliation: "Northwest A&F University, Shaanxi, China"
+    # orcid: "https://orcid.org/XXXX-XXXX-XXXX-XXXX"
+  - given-names: "Miguel"
+    family-names: "Torres-Torriti"
+    affiliation: "School of Engineering, Pontificia Universidad Católica de Chile, Santiago, Chile"
+    # orcid: "https://orcid.org/XXXX-XXXX-XXXX-XXXX"
+  - given-names: "Fernando"
+    family-names: "Auat Cheein"
+    affiliation: "Harper Adams University, Newport, Shropshire, UK"
+    # orcid: "https://orcid.org/XXXX-XXXX-XXXX-XXXX"
+keywords:
+  - LiDAR SLAM
+  - agricultural robotics
+  - orchards
+  - GNSS-denied navigation
+  - benchmarking
+preferred-citation:
+  type: article
+  title: "Comparing six LiDAR-based simultaneous localisation and mapping approaches on public orchard datasets to assess the feasibility of GNSS-free autonomous machinery"
+  journal: "Precision Agriculture"
+  # TODO after acceptance: year, volume, start (article number) and the article DOI, e.g.
+  # year: 2027
+  # doi: "10.1007/sXXXXX-XXX-XXXXX-X"
+  authors:
+    - given-names: "Nestor"
+      family-names: "Deniz"
+    - given-names: "Paola"
+      family-names: "Nazate-Burgos"
+    - given-names: "Longsheng"
+      family-names: "Fu"
+    - given-names: "Miguel"
+      family-names: "Torres-Torriti"
+    - given-names: "Fernando"
+      family-names: "Auat Cheein"

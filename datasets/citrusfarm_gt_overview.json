@@ -1,0 +1,709 @@
+{
+ "02_13B_Jackal": {
+  "connections": [
+   {
+    "topic": "/gps/fix/odometry",
+    "msgtype": "nav_msgs/msg/Odometry",
+    "count": 4447
+   }
+  ],
+  "odometry": {
+   "/gps/fix/odometry": {
+    "count": 4447,
+    "frame_id": {
+     "rtk_path_frame": 4447
+    },
+    "child_frame_id": {
+     "": 4447
+    },
+    "t_first_hdr": 1689717081.917136,
+    "t_last_hdr": 1689717526.474206,
+    "t_first_hdr_utc": "2023-07-18 21:51:21.917 UTC",
+    "t_last_hdr_utc": "2023-07-18 21:58:46.474 UTC",
+    "span_s": 444.55707001686096,
+    "rate_hz_count_over_span": 10.00096567991006,
+    "dt_median_s": 0.10002446174621582,
+    "dt_mean_s": 0.09999034413334705,
+    "dt_min_s": 0.03411602973937988,
+    "dt_max_s": 0.15985703468322754,
+    "dt_p01_s": 0.07057983875274658,
+    "dt_p99_s": 0.13069878816604616,
+    "n_nonpositive_dt": 0,
+    "n_gaps_gt_0p2s": 0,
+    "gaps_gt_0p2s_(t_from_start, dt)": [],
+    "hdr_minus_bag_s": {
+     "min": -0.021381855010986328,
+     "median": -0.0012314319610595703,
+     "max": -0.00042557716369628906
+    },
+    "first_position": [
+     0.0,
+     -0.0,
+     0.0
+    ],
+    "pos_min": [
+     -0.0037162716658076735,
+     -0.6972326340843067,
+     -3.2653399741375324
+    ],
+    "pos_max": [
+     46.68728126350298,
+     217.42236070084888,
+     0.25683798232120125
+    ],
+    "path_length_3d_m": 524.6017922796983,
+    "path_length_2d_m": 521.4502123960701,
+    "end_minus_start_m": [
+     0.049336411632517584,
+     217.23102447017152,
+     -2.6761591870393886
+    ],
+    "orientation_unique_values(first 5)": [
+     [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    ],
+    "orientation_n_unique": 1,
+    "orientation_populated": false,
+    "pose_cov_all_zero": true,
+    "pose_cov_n_unique_matrices": 1,
+    "pose_cov_diag_min": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "pose_cov_diag_median": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "pose_cov_diag_max": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "pose_cov_offdiag_all_zero": true,
+    "twist_all_zero": true,
+    "twist_cov_all_zero": true,
+    "csv_compare": {
+     "csv_header_lines": [
+      "# ground truth trajectory",
+      "# file: '02_13B_Jackal/gt.bag'",
+      "# timestamp,tx,ty,tz,qx,qy,qz,qw"
+     ],
+     "csv_rows": 4447,
+     "max_abs_dt_vs_header_s": 0.021381616592407227,
+     "max_abs_dt_vs_bagtime_s": 2.384185791015625e-07,
+     "max_abs_dpos_m": 0.0,
+     "csv_quaternion_all_zero": true
+    }
+   }
+  },
+  "bag_start": 1689717081.918316,
+  "bag_end": 1689717526.478839,
+  "bag_duration_s": 444.560522945,
+  "bag_start_utc": "2023-07-18 21:51:21.918 UTC"
+ },
+ "03_13B_Jackal": {
+  "connections": [
+   {
+    "topic": "/gps/fix/odometry",
+    "msgtype": "nav_msgs/msg/Odometry",
+    "count": 17079
+   }
+  ],
+  "odometry": {
+   "/gps/fix/odometry": {
+    "count": 17079,
+    "frame_id": {
+     "rtk_path_frame": 17079
+    },
+    "child_frame_id": {
+     "": 17079
+    },
+    "t_first_hdr": 1689560240.972558,
+    "t_last_hdr": 1689561948.671612,
+    "t_first_hdr_utc": "2023-07-17 02:17:20.972 UTC",
+    "t_last_hdr_utc": "2023-07-17 02:45:48.671 UTC",
+    "span_s": 1707.6990540027618,
+    "rate_hz_count_over_span": 10.000591122873796,
+    "dt_median_s": 0.09984004497528076,
+    "dt_mean_s": 0.09999408912066764,
+    "dt_min_s": 0.04192399978637695,
+    "dt_max_s": 0.15855813026428223,
+    "dt_p01_s": 0.06824066162109375,
+    "dt_p99_s": 0.13199309349060057,
+    "n_nonpositive_dt": 0,
+    "n_gaps_gt_0p2s": 0,
+    "gaps_gt_0p2s_(t_from_start, dt)": [],
+    "hdr_minus_bag_s": {
+     "min": -0.02435302734375,
+     "median": -0.0011723041534423828,
+     "max": -0.0004208087921142578
+    },
+    "first_position": [
+     0.0,
+     -0.0,
+     0.0
+    ],
+    "pos_min": [
+     -4.755778969894533,
+     -102.68512963681401,
+     -1.845084141202392
+    ],
+    "pos_max": [
+     47.30192279304143,
+     115.35045577627012,
+     1.6508503437818263
+    ],
+    "path_length_3d_m": 2035.2154341512444,
+    "path_length_2d_m": 2027.3945429348069,
+    "end_minus_start_m": [
+     0.4883930811367391,
+     0.26959805363982836,
+     -0.026278140026306573
+    ],
+    "orientation_unique_values(first 5)": [
+     [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    ],
+    "orientation_n_unique": 1,
+    "orientation_populated": false,
+    "pose_cov_all_zero": true,
+    "pose_cov_n_unique_matrices": 1,
+    "pose_cov_diag_min": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "pose_cov_diag_median": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "pose_cov_diag_max": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "pose_cov_offdiag_all_zero": true,
+    "twist_all_zero": true,
+    "twist_cov_all_zero": true,
+    "csv_compare": {
+     "csv_header_lines": [
+      "# ground truth trajectory",
+      "# file: '03_13B_Jackal/gt.bag'",
+      "# timestamp,tx,ty,tz,qx,qy,qz,qw"
+     ],
+     "csv_rows": 17079,
+     "max_abs_dt_vs_header_s": 0.02435302734375,
+     "max_abs_dt_vs_bagtime_s": 2.384185791015625e-07,
+     "max_abs_dpos_m": 0.0,
+     "csv_quaternion_all_zero": true
+    }
+   }
+  },
+  "bag_start": 1689560240.973365,
+  "bag_end": 1689561948.6728663,
+  "bag_duration_s": 1707.6995014410002,
+  "bag_start_utc": "2023-07-17 02:17:20.973 UTC"
+ },
+ "04_13D_Jackal": {
+  "connections": [
+   {
+    "topic": "/gps/fix/odometry",
+    "msgtype": "nav_msgs/msg/Odometry",
+    "count": 7694
+   }
+  ],
+  "odometry": {
+   "/gps/fix/odometry": {
+    "count": 7694,
+    "frame_id": {
+     "rtk_path_frame": 7694
+    },
+    "child_frame_id": {
+     "": 7694
+    },
+    "t_first_hdr": 1689715534.226004,
+    "t_last_hdr": 1689716303.483955,
+    "t_first_hdr_utc": "2023-07-18 21:25:34.226 UTC",
+    "t_last_hdr_utc": "2023-07-18 21:38:23.483 UTC",
+    "span_s": 769.2579510211945,
+    "rate_hz_count_over_span": 10.00054661740902,
+    "dt_median_s": 0.10010313987731934,
+    "dt_mean_s": 0.09999453412468406,
+    "dt_min_s": 0.04335904121398926,
+    "dt_max_s": 0.1625669002532959,
+    "dt_p01_s": 0.06710528373718262,
+    "dt_p99_s": 0.13179603576660157,
+    "n_nonpositive_dt": 0,
+    "n_gaps_gt_0p2s": 0,
+    "gaps_gt_0p2s_(t_from_start, dt)": [],
+    "hdr_minus_bag_s": {
+     "min": -0.007924795150756836,
+     "median": -0.000939488410949707,
+     "max": -0.0003845691680908203
+    },
+    "first_position": [
+     0.0,
+     -0.0,
+     0.0
+    ],
+    "pos_min": [
+     -56.60429993428937,
+     -0.1676069785917388,
+     -0.5304262605643544
+    ],
+    "pos_max": [
+     2.7426667209764797,
+     39.81566222395367,
+     0.2283962684208518
+    ],
+    "path_length_3d_m": 896.1536858165504,
+    "path_length_2d_m": 890.8817893070144,
+    "end_minus_start_m": [
+     -1.062275191082486,
+     0.011621139731311979,
+     0.028432991626687
+    ],
+    "orientation_unique_values(first 5)": [
+     [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    ],
+    "orientation_n_unique": 1,
+    "orientation_populated": false,
+    "pose_cov_all_zero": true,
+    "pose_cov_n_unique_matrices": 1,
+    "pose_cov_diag_min": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "pose_cov_diag_median": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "pose_cov_diag_max": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "pose_cov_offdiag_all_zero": true,
+    "twist_all_zero": true,
+    "twist_cov_all_zero": true,
+    "csv_compare": {
+     "csv_header_lines": [
+      "# ground truth trajectory",
+      "# file: '04_13D_Jackal/gt.bag'",
+      "# timestamp,tx,ty,tz,qx,qy,qz,qw"
+     ],
+     "csv_rows": 7694,
+     "max_abs_dt_vs_header_s": 0.007924795150756836,
+     "max_abs_dt_vs_bagtime_s": 2.384185791015625e-07,
+     "max_abs_dpos_m": 0.0,
+     "csv_quaternion_all_zero": true
+    }
+   }
+  },
+  "bag_start": 1689715534.2270324,
+  "bag_end": 1689716303.4846265,
+  "bag_duration_s": 769.2575942090001,
+  "bag_start_utc": "2023-07-18 21:25:34.227 UTC"
+ },
+ "05_13D_Jackal": {
+  "connections": [
+   {
+    "topic": "/gps/fix/odometry",
+    "msgtype": "nav_msgs/msg/Odometry",
+    "count": 7593
+   }
+  ],
+  "odometry": {
+   "/gps/fix/odometry": {
+    "count": 7593,
+    "frame_id": {
+     "rtk_path_frame": 7593
+    },
+    "child_frame_id": {
+     "": 7593
+    },
+    "t_first_hdr": 1689552313.474646,
+    "t_last_hdr": 1689553072.630737,
+    "t_first_hdr_utc": "2023-07-17 00:05:13.474 UTC",
+    "t_last_hdr_utc": "2023-07-17 00:17:52.630 UTC",
+    "span_s": 759.1560909748077,
+    "rate_hz_count_over_span": 10.000578392582424,
+    "dt_median_s": 0.10018050670623779,
+    "dt_mean_s": 0.09999421640869438,
+    "dt_min_s": 0.04481101036071777,
+    "dt_max_s": 0.1528620719909668,
+    "dt_p01_s": 0.0667979907989502,
+    "dt_p99_s": 0.13268167972564698,
+    "n_nonpositive_dt": 0,
+    "n_gaps_gt_0p2s": 0,
+    "gaps_gt_0p2s_(t_from_start, dt)": [],
+    "hdr_minus_bag_s": {
+     "min": -0.031740427017211914,
+     "median": -0.0012543201446533203,
+     "max": -0.0004200935363769531
+    },
+    "first_position": [
+     0.0,
+     -0.0,
+     0.0
+    ],
+    "pos_min": [
+     -58.53190875029834,
+     -40.24528992529236,
+     -0.2477499912557164
+    ],
+    "pos_max": [
+     4.066208943987187,
+     3.833364975842718,
+     0.5730396058610836
+    ],
+    "path_length_3d_m": 865.3406040166391,
+    "path_length_2d_m": 859.3208209315883,
+    "end_minus_start_m": [
+     -1.0098260030452304,
+     0.8228760338764313,
+     -0.0010945448317443152
+    ],
+    "orientation_unique_values(first 5)": [
+     [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    ],
+    "orientation_n_unique": 1,
+    "orientation_populated": false,
+    "pose_cov_all_zero": true,
+    "pose_cov_n_unique_matrices": 1,
+    "pose_cov_diag_min": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "pose_cov_diag_median": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "pose_cov_diag_max": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "pose_cov_offdiag_all_zero": true,
+    "twist_all_zero": true,
+    "twist_cov_all_zero": true,
+    "csv_compare": {
+     "csv_header_lines": [
+      "# ground truth trajectory",
+      "# file: '05_13D_Jackal/gt.bag'",
+      "# timestamp,tx,ty,tz,qx,qy,qz,qw"
+     ],
+     "csv_rows": 7593,
+     "max_abs_dt_vs_header_s": 0.03174018859863281,
+     "max_abs_dt_vs_bagtime_s": 2.384185791015625e-07,
+     "max_abs_dpos_m": 0.0,
+     "csv_quaternion_all_zero": true
+    }
+   }
+  },
+  "bag_start": 1689552313.4755201,
+  "bag_end": 1689553072.6339931,
+  "bag_duration_s": 759.158473185,
+  "bag_start_utc": "2023-07-17 00:05:13.475 UTC"
+ },
+ "06_14B_Jackal": {
+  "connections": [
+   {
+    "topic": "/gps/fix/odometry",
+    "msgtype": "nav_msgs/msg/Odometry",
+    "count": 3024
+   }
+  ],
+  "odometry": {
+   "/gps/fix/odometry": {
+    "count": 3024,
+    "frame_id": {
+     "rtk_path_frame": 3024
+    },
+    "child_frame_id": {
+     "": 3024
+    },
+    "t_first_hdr": 1689715775.938954,
+    "t_last_hdr": 1689716078.201504,
+    "t_first_hdr_utc": "2023-07-18 21:29:35.938 UTC",
+    "t_last_hdr_utc": "2023-07-18 21:34:38.201 UTC",
+    "span_s": 302.26254987716675,
+    "rate_hz_count_over_span": 10.001238993148455,
+    "dt_median_s": 0.10010409355163574,
+    "dt_mean_s": 0.0999876116034293,
+    "dt_min_s": 0.004414796829223633,
+    "dt_max_s": 0.2062361240386963,
+    "dt_p01_s": 0.06741724491119384,
+    "dt_p99_s": 0.132767128944397,
+    "n_nonpositive_dt": 0,
+    "n_gaps_gt_0p2s": 1,
+    "gaps_gt_0p2s_(t_from_start, dt)": [
+     [
+      278.0680818557739,
+      0.2062361240386963
+     ]
+    ],
+    "hdr_minus_bag_s": {
+     "min": -0.01081538200378418,
+     "median": -0.0009075403213500977,
+     "max": -0.0004017353057861328
+    },
+    "first_position": [
+     0.0,
+     -0.0,
+     0.0
+    ],
+    "pos_min": [
+     -38.676813212164,
+     -82.30684149806973,
+     -0.10140433898129686
+    ],
+    "pos_max": [
+     0.0010693381560007377,
+     0.5187004793401618,
+     0.7057743955875253
+    ],
+    "path_length_3d_m": 356.5820113159591,
+    "path_length_2d_m": 355.181872968013,
+    "end_minus_start_m": [
+     -37.75679818262376,
+     -0.43101254838764325,
+     -0.08118595763613712
+    ],
+    "orientation_unique_values(first 5)": [
+     [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    ],
+    "orientation_n_unique": 1,
+    "orientation_populated": false,
+    "pose_cov_all_zero": true,
+    "pose_cov_n_unique_matrices": 1,
+    "pose_cov_diag_min": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "pose_cov_diag_median": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "pose_cov_diag_max": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "pose_cov_offdiag_all_zero": true,
+    "twist_all_zero": true,
+    "twist_cov_all_zero": true,
+    "csv_compare": {
+     "csv_header_lines": [
+      "# ground truth trajectory",
+      "# file: '06_14B_Jackal/gt.bag'",
+      "# timestamp,tx,ty,tz,qx,qy,qz,qw"
+     ],
+     "csv_rows": 3024,
+     "max_abs_dt_vs_header_s": 0.010815143585205078,
+     "max_abs_dt_vs_bagtime_s": 2.384185791015625e-07,
+     "max_abs_dpos_m": 0.0,
+     "csv_quaternion_all_zero": true
+    }
+   }
+  },
+  "bag_start": 1689715775.9398592,
+  "bag_end": 1689716078.2020533,
+  "bag_duration_s": 302.26219420900003,
+  "bag_start_utc": "2023-07-18 21:29:35.939 UTC"
+ },
+ "07_14B_Jackal": {
+  "connections": [
+   {
+    "topic": "/gps/fix/odometry",
+    "msgtype": "nav_msgs/msg/Odometry",
+    "count": 10139
+   }
+  ],
+  "odometry": {
+   "/gps/fix/odometry": {
+    "count": 10139,
+    "frame_id": {
+     "rtk_path_frame": 10139
+    },
+    "child_frame_id": {
+     "": 10139
+    },
+    "t_first_hdr": 1689557480.239352,
+    "t_last_hdr": 1689558493.96521,
+    "t_first_hdr_utc": "2023-07-17 01:31:20.239 UTC",
+    "t_last_hdr_utc": "2023-07-17 01:48:13.965 UTC",
+    "span_s": 1013.7258579730988,
+    "rate_hz_count_over_span": 10.000731381431361,
+    "dt_median_s": 0.10017502307891846,
+    "dt_mean_s": 0.09999268672056606,
+    "dt_min_s": 0.011897802352905273,
+    "dt_max_s": 0.19307613372802734,
+    "dt_p01_s": 0.06503942012786865,
+    "dt_p99_s": 0.13452401876449585,
+    "n_nonpositive_dt": 0,
+    "n_gaps_gt_0p2s": 0,
+    "gaps_gt_0p2s_(t_from_start, dt)": [],
+    "hdr_minus_bag_s": {
+     "min": -0.020836591720581055,
+     "median": -0.0010564327239990234,
+     "max": -0.0003886222839355469
+    },
+    "first_position": [
+     0.0,
+     -0.0,
+     0.0
+    ],
+    "pos_min": [
+     -41.980078905700175,
+     -86.43699869321465,
+     -0.10316570511315604
+    ],
+    "pos_max": [
+     0.17151844553170945,
+     1.5880765692071124,
+     0.7927420879755687
+    ],
+    "path_length_3d_m": 1212.7457973445726,
+    "path_length_2d_m": 1208.1390363835685,
+    "end_minus_start_m": [
+     0.15160923635458262,
+     -0.5062067459075026,
+     0.03796956935809703
+    ],
+    "orientation_unique_values(first 5)": [
+     [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    ],
+    "orientation_n_unique": 1,
+    "orientation_populated": false,
+    "pose_cov_all_zero": true,
+    "pose_cov_n_unique_matrices": 1,
+    "pose_cov_diag_min": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "pose_cov_diag_median": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "pose_cov_diag_max": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "pose_cov_offdiag_all_zero": true,
+    "twist_all_zero": true,
+    "twist_cov_all_zero": true,
+    "csv_compare": {
+     "csv_header_lines": [
+      "# ground truth trajectory",
+      "# file: '07_14B_Jackal/gt.bag'",
+      "# timestamp,tx,ty,tz,qx,qy,qz,qw"
+     ],
+     "csv_rows": 10139,
+     "max_abs_dt_vs_header_s": 0.020836353302001953,
+     "max_abs_dt_vs_bagtime_s": 2.384185791015625e-07,
+     "max_abs_dpos_m": 0.0,
+     "csv_quaternion_all_zero": true
+    }
+   }
+  },
+  "bag_start": 1689557480.2402787,
+  "bag_end": 1689558493.9664416,
+  "bag_duration_s": 1013.726162785,
+  "bag_start_utc": "2023-07-17 01:31:20.240 UTC"
+ }
+}

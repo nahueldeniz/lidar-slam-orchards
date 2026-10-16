@@ -1,0 +1,100 @@
+# DRAFT - A-LOAM tuning levels (brief Section 5.0, steps 1-2). Not frozen; awaiting review by Nahuel.
+# One-at-a-time design: each run = configuration D with exactly one parameter set to one level.
+# mechanism build_arg  -> separate image: docker build --build-arg <build_arg>=<level>
+# mechanism ros_param  -> same D image; the launch file value is changed (configs/aloam/<run>/aloam_velodyne_VLP_16.launch)
+# Justification for each parameter and level: configs/aloam/tuning_rationale.md.
+status: DRAFT
+method: aloam
+source_commit: e51f88c12b483ce42dfa219783712c7234dc8c08
+base_configuration: D            # configs/aloam/D (no build overrides, VLP-16 launch values)
+tuning_sequences: [cf_4, cf_5]
+excluded_from_tuning:
+  - key: scanPeriod / SCAN_PERIOD
+    reason: sensor setting, not a tuned parameter (brief Section 5.0); no effect with DISTORTION 0 (source_audit.md Section 2.3)
+  - key: scan_line, minimum_range, mapping_skip_frame
+    reason: fixed at the VLP-16 launch values (brief Section 5.4)
+
+parameters:
+  - id: a
+    paper_name: distance SQ threshold
+    key: DISTANCE_SQ_THRESHOLD
+    location: src/laserOdometry.cpp:65
+    mechanism: build_arg
+    build_arg: DISTANCE_SQ_THRESHOLD
+    unit: m^2
+    module: FE
+    default: 25
+    levels: [12.5, 50]
+    level_rule: "x0.5 and x2"
+    submitted: {P1: 25, P2: 25, P3: 25}
+
+  - id: b
+    paper_name: line resolution
+    key: mapping_line_resolution
+    location: src/laserMapping.cpp:902 (ROS parameter; launch value 0.2, code default 0.4)
+    mechanism: ros_param
+    unit: m
+    module: BE
+    default: 0.2
+    levels: [0.1, 0.4]
+    level_rule: "x0.5 and x2; 0.4 is also the HDL-64 launch value, the code default and the submitted P1-P3"
+    submitted: {P1: 0.4, P2: 0.4, P3: 0.4}
+
+  - id: c
+    paper_name: plane resolution
+    key: mapping_plane_resolution
+    location: src/laserMapping.cpp:903 (ROS parameter; launch value 0.4, code default 0.8)
+    mechanism: ros_param
+    unit: m
+    module: BE
+    default: 0.4
+    levels: [0.2, 0.8]
+    level_rule: "x0.5 and x2; 0.8 is also the HDL-64 launch value, the code default and the submitted P1-P3"
+    submitted: {P1: 0.8, P2: 0.8, P3: 0.8}
+
+  - id: d
+    paper_name: nearby scan
+    key: NEARBY_SCAN
+    location: src/laserOdometry.cpp:66
+    mechanism: build_arg
+    build_arg: NEARBY_SCAN
+    unit: scan lines (compared with integer ring ids; 2.5 acts as 2)
+    module: FE
+    default: 2.5
+    levels: [1.5, 4]
+    level_rule: "-1 step (effective 1 ring) and submitted P1 (effective 4 rings = x2 of the effective default 2)"
+    submitted: {P1: 4, P2: 2.5, P3: 2.5}
+
+  - id: e
+    paper_name: Huber loss (odometry)
+    key: ODOM_HUBER_DELTA
+    location: src/laserOdometry.cpp:284 (literal 0.1 in upstream)
+    mechanism: build_arg
+    build_arg: ODOM_HUBER_DELTA
+    unit: m (point-to-line / point-to-plane distance at which the loss turns linear)
+    module: FE
+    default: 0.1
+    levels: [0.05, 0.2]
+    level_rule: "x0.5 (= submitted P3) and x2"
+    submitted: {P1: 0.125, P2: 0.1, P3: 0.05}
+
+  - id: f
+    paper_name: Huber loss (mapping)
+    key: MAPPING_HUBER_DELTA
+    location: src/laserMapping.cpp:565 (literal 0.1 in upstream)
+    mechanism: build_arg
+    build_arg: MAPPING_HUBER_DELTA
+    unit: m
+    module: BE
+    default: 0.1
+    levels: [0.05, 0.2]
+    level_rule: "x0.5 and x2 (submitted P1 = 0.75 is outside x0.5-x2; see rationale)"
+    submitted: {P1: 0.75, P2: 0.1, P3: 0.1}
+
+run_count:
+  single_changes: 12          # 6 parameters x 2 levels
+  per_sequence: 1
+  sequences: 2
+  total_oat_runs: 24
+  plus_d_spread_runs_on_cf_5: 3
+  images_to_build: 9          # D + 8 build-arg levels (b and c reuse the D image)

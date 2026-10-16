@@ -1,0 +1,130 @@
+# DRAFT - NOT FROZEN. Do not run until Nahuel has reviewed it (brief Section 5.0, steps 1-2).
+# Tuning levels for Direct LiDAR Odometry (dlo). Rationale: configs/dlo/tuning_rationale.md.
+#
+# One-at-a-time design: each run = configuration D with exactly ONE parameter set to ONE level.
+# All parameters are front-end (DLO has no back-end), so all can change the evaluated output
+# /robot/dlo/odom_node/odom.
+status: DRAFT
+method: dlo
+source: "vectr-ucla/direct_lidar_odometry @ 11528c02e89a1619ee3c42ba39ecaa992bd20bf4 (dlo.yaml version 1.4.3)"
+base_configuration: configs/dlo/D   # dlo/imu false, adaptiveParams true, all other values upstream
+tuning_sequences: [cf_4, cf_5]
+runs_per_level_per_sequence: 1
+runs_needed:
+  one_at_a_time: 28      # 7 parameters x 2 levels x 2 sequences
+  d_spread_on_cf_5: 3    # D three times on cf_5 (run-to-run spread)
+  t_check: 2             # T once on cf_4 and cf_5
+
+parameters:
+
+  - id: a
+    paper_name: "ego (crop) box size"
+    yaml_file: params.yaml
+    key: dlo/odomNode/preprocessing/cropBoxFilter/size
+    unit: "m, half edge of the cube [-s, s]^3 that is removed around the sensor"
+    type: continuous
+    default: 1.0
+    levels: [0.5, 2.0]
+    level_rule: "x0.5 / x2 (submitted P1-P3 all equal the default)"
+    limits: {min: 0.4, max: 3.0}
+    limits_note: >-
+      Lower bound must still remove the robot's own returns (check against the CitrusFarm
+      base_link-LiDAR calibration and the Go1 geometry); upper bound must stay below the distance to
+      the nearest canopy so that tree returns are kept. Both bounds are provisional (open question).
+
+  - id: b
+    paper_name: "scan voxel size"
+    yaml_file: params.yaml
+    key: dlo/odomNode/preprocessing/voxelFilter/scan/res
+    unit: m (voxel leaf)
+    type: continuous
+    default: 0.25
+    levels: [0.15, 0.5]
+    level_rule: "0.15 = submitted P1; 0.5 = x2"
+    limits: {min: 0.12, max: 1.0}
+    limits_note: >-
+      Below about 0.11 m PCL 1.8.1 VoxelGrid can exceed its integer index range for a 200 m x 200 m x
+      54 m VLP-16 scan and then returns the cloud UNFILTERED with only a warning; above 1 m tree
+      trunks and canopy edges are lost (VLP-16 ring spacing is about 0.35 m at 10 m range).
+
+  - id: c
+    paper_name: "sub-map voxel size"
+    yaml_file: params.yaml
+    key: dlo/odomNode/preprocessing/voxelFilter/submap/res
+    unit: m (voxel leaf applied to each keyframe cloud when stored)
+    type: continuous
+    default: 0.5
+    levels: [0.3, 1.0]
+    level_rule: "0.3 = submitted P1; 1.0 = x2"
+    limits: {min: 0.12, max: 2.0}
+    limits_note: "Same PCL integer-index limit as (b); above 2 m the submap keeps too little structure."
+
+  - id: d2
+    paper_name: "keyframe rotation threshold"
+    yaml_file: params.yaml
+    key: dlo/odomNode/keyframe/threshR
+    unit: deg
+    type: continuous
+    default: 45.0
+    levels: [22.5, 90.0]
+    level_rule: "x0.5 / x2. Alternatives NOT used: paper value 30 deg; submitted P2/P3 5 deg (mapping to threshR was only 'proposed')"
+    limits: {min: 5.0, max: 180.0}
+    limits_note: >-
+      Only acts when no more than one keyframe lies within 1.5 x the adaptive distance threshold
+      (odom.cc:1150-1158), so its effect is expected to be small; 180 deg disables it.
+
+  - id: e1
+    paper_name: "sub-map keyframes: k-nearest"
+    yaml_file: params.yaml
+    key: dlo/odomNode/submap/keyframe/knn
+    unit: keyframes
+    type: integer
+    default: 10
+    levels: [5, 20]
+    level_rule: "x0.5 / x2; 20 = submitted P2"
+    limits: {min: 1, max: 50}
+    limits_note: "Upper bound for CPU time and memory of the submap covariances."
+
+  - id: e2
+    paper_name: "sub-map keyframes: convex hull"
+    yaml_file: params.yaml
+    key: dlo/odomNode/submap/keyframe/kcv
+    unit: keyframes
+    type: integer
+    default: 10
+    levels: [5, 20]
+    level_rule: "x0.5 / x2; 20 = submitted P2"
+    limits: {min: 1, max: 50}
+
+  - id: e3
+    paper_name: "sub-map keyframes: concave hull"
+    yaml_file: params.yaml
+    key: dlo/odomNode/submap/keyframe/kcc
+    unit: keyframes
+    type: integer
+    default: 10
+    levels: [5, 20]
+    level_rule: "x0.5 / x2; 20 = submitted P2"
+    limits: {min: 1, max: 50}
+
+fixed_in_D_and_T:
+  dlo/imu: false                 # LiDAR only; with true and no IMU, DLO never initialises
+  dlo/adaptiveParams: true       # brief C5
+  dlo/gravityAlign: true         # upstream value; inactive because dlo/imu is false
+  all_gicp_parameters: upstream  # brief row (f): not varied
+
+excluded:
+  - key: dlo/odomNode/keyframe/threshD
+    reason: >-
+      Inactive under adaptiveParams: setAdaptiveParams() overwrites keyframe_thresh_dist_ with
+      0.5/1/5/10 m from the spaciousness metric before every use (odom.cc:662-664, 1193-1209).
+      The yaml value 5.0 is only used once, for the concave-hull alpha set in the constructor
+      (odom.cc:98), which is also overwritten before the first hull is computed.
+  - key: "gicp/{s2s,s2m}/ransac/iterations, ransac/outlierRejectionThresh, euclideanFitnessEpsilon"
+    reason: "Set on pcl::Registration but never read by NanoGICP's own optimiser (inactive)."
+  - key: "other gicp parameters (kCorrespondences, maxCorrespondenceDistance, maxIterations, transformationEpsilon, minNumPoints)"
+    reason: "Brief row (f): not varied."
+  - key: "dlo/imu, dlo/gravityAlign, odomNode/imu/*"
+    reason: "LiDAR only."
+  - key: "mapNode/*"
+    reason: "Map node only; cannot change the odometry output."

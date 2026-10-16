@@ -1,0 +1,45 @@
+# reason: logging only - each node prints its effective compile-time constants and ROS parameters (ROS_INFO, tag [slambench-constants]) at start-up so every run's console log proves which build it used; applies after 0001.
+diff --git a/src/laserMapping.cpp b/src/laserMapping.cpp
+index a762a40..e58d519 100755
+--- a/src/laserMapping.cpp
++++ b/src/laserMapping.cpp
+@@ -910,6 +910,9 @@ int main(int argc, char **argv)
+ 	float planeRes = 0;
+ 	nh.param<float>("mapping_line_resolution", lineRes, 0.4);
+ 	nh.param<float>("mapping_plane_resolution", planeRes, 0.8);
++	// [slambench] logging only: effective compile-time constants and parameters of this node
++	ROS_INFO("[slambench-constants] node=alaserMapping MAPPING_HUBER_DELTA=%.9g mapping_line_resolution=%.9g mapping_plane_resolution=%.9g",
++	         MAPPING_HUBER_DELTA, lineRes, planeRes);
+ 	printf("line resolution %f plane resolution %f \n", lineRes, planeRes);
+ 	downSizeFilterCorner.setLeafSize(lineRes, lineRes,lineRes);
+ 	downSizeFilterSurf.setLeafSize(planeRes, planeRes, planeRes);
+diff --git a/src/laserOdometry.cpp b/src/laserOdometry.cpp
+index e8583fa..741f13c 100644
+--- a/src/laserOdometry.cpp
++++ b/src/laserOdometry.cpp
+@@ -209,6 +209,11 @@ int main(int argc, char **argv)
+     ros::NodeHandle nh;
+ 
+     nh.param<int>("mapping_skip_frame", skipFrameNum, 2);
++    // [slambench] logging only: effective compile-time constants and parameters of this node
++    ROS_INFO("[slambench-constants] node=alaserOdometry SCAN_PERIOD=%.9g DISTANCE_SQ_THRESHOLD=%.9g NEARBY_SCAN=%.9g ODOM_HUBER_DELTA=%.9g DISTORTION=%d mapping_skip_frame=%d",
++             SCAN_PERIOD, DISTANCE_SQ_THRESHOLD, NEARBY_SCAN, ODOM_HUBER_DELTA, (int)DISTORTION, skipFrameNum);
++    if (!DISTORTION && SCAN_PERIOD != 0.1)
++        ROS_WARN("[slambench-constants] SCAN_PERIOD=%.9g differs from 0.1 but has no effect: DISTORTION is 0, so every point uses s = 1.0", SCAN_PERIOD);
+ 
+     printf("Mapping %d Hz \n", 10 / skipFrameNum);
+ 
+diff --git a/src/scanRegistration.cpp b/src/scanRegistration.cpp
+index 94fbba9..3ddd304 100755
+--- a/src/scanRegistration.cpp
++++ b/src/scanRegistration.cpp
+@@ -472,6 +472,9 @@ int main(int argc, char **argv)
+     nh.param<int>("scan_line", N_SCANS, 16);
+ 
+     nh.param<double>("minimum_range", MINIMUM_RANGE, 0.1);
++    // [slambench] logging only: effective compile-time constants and parameters of this node
++    ROS_INFO("[slambench-constants] node=ascanRegistration scanPeriod=%.9g systemDelay=%d scan_line=%d minimum_range=%.9g input=/velodyne_points",
++             scanPeriod, systemDelay, N_SCANS, MINIMUM_RANGE);
+ 
+     printf("scan line number %d \n", N_SCANS);
+ 

@@ -1,0 +1,79 @@
+{
+  "_comment": "Source pins for the DLO (dlo) and SLAMesh (mesh) images. Collected 2026-10-12 by the dlo/mesh environment agent. Dates are committer dates in ISO 8601 with the committer's offset.",
+  "dlo": {
+    "direct_lidar_odometry": {
+      "url": "https://github.com/vectr-ucla/direct_lidar_odometry",
+      "branch": "master",
+      "sha": "11528c02e89a1619ee3c42ba39ecaa992bd20bf4",
+      "commit_date": "2023-05-19T11:00:02-07:00",
+      "subject": "Minor changes and typo fixes to save_traj service by @sumanthrao1997",
+      "nearest_tag": "v1.4.3 (ba00a423d344041ac2d739f0a3d7c45c4ffdd062, 2023-04-10); master adds only the save_traj service on top of v1.4.3",
+      "cfg_dlo_yaml_version": "1.4.3",
+      "local_clone": "env/src/dlo/direct_lidar_odometry",
+      "other_remote_branches_not_used": {
+        "nano_gicp": "7f4ed310e6b60e34660a4479a52ffd68b4fdaf40 (2023-07-18)",
+        "feature/mae157a": "0eec8e52969f0d60404de851e24f60f61b8c2d62 (2024-06-08)"
+      },
+      "patches": [
+        "env/patches/dlo/0001-cmake-3.10-add-definitions.patch (build fix)",
+        "env/patches/dlo/0002-log-adaptive-keyframe-threshold.patch (logging only)"
+      ]
+    }
+  },
+  "mesh": {
+    "SLAMesh": {
+      "url": "https://github.com/RuanJY/SLAMesh",
+      "branch": "master",
+      "sha": "50b4356e8a24c4fe2e2dc1be37d682e703843314",
+      "commit_date": "2025-01-05T23:26:08+08:00",
+      "subject": "Merge branch 'master' of github.com:RuanJY/SLAMesh",
+      "local_clone": "env/src/mesh/SLAMesh",
+      "history_notes": [
+        "acabece (committed 2024-05-16, authored 2022-01-21) 'fixed odometry 0 timestamp': before this commit /lidar_odometry had header.stamp = 0 and empty frame ids.",
+        "5f56fd1 (2025-01-05) changed config/online.yaml defaults: range_min 3.0 -> 0.5, num_margin_old_cell 500 -> -1, residual_combination true -> false."
+      ],
+      "patches": []
+    },
+    "mesh_tools": {
+      "url": "https://github.com/naturerobots/mesh_tools",
+      "branch": "noetic",
+      "sha": "95433f1606ffdc8a2eff7e66f791fdce9a231e09",
+      "commit_date": "2024-08-19T15:18:50+02:00",
+      "subject": "Merge pull request #43 from naturerobots/noetic-rviz-textures",
+      "why_this_branch": "SLAMesh README section 2.1 and docker/Dockerfile line 48 both use 'git clone https://github.com/naturerobots/mesh_tools.git -b noetic' (unpinned). The default branch 'main' is ROS 2.",
+      "packages_built": ["mesh_msgs", "mesh_msgs_conversions"],
+      "packages_not_built": ["hdf5_map_io", "label_manager", "mesh_msgs_hdf5", "mesh_msgs_transform", "mesh_tools (metapackage)", "rviz_map_plugin (needs RViz)"],
+      "equivalent_release": "tag 1.1.0 (b3b55a522c883334eb499318aee35efd0825f2dc, 2021-10-27); mesh_msgs and mesh_msgs_conversions differ from noetic HEAD only by 'fix no return types' and a CMake minimum-version change",
+      "local_clone": "env/src/mesh/mesh_tools"
+    },
+    "lvr2": {
+      "source": "ROS Melodic apt binary (frozen EOL repository)",
+      "apt_package": "ros-melodic-lvr2",
+      "apt_version": "20.11.3-1bionic.20211011.173739",
+      "deb_sha256": "4350065e50c1497ba5717d3434cf6fc31408b88287fc9559f1c05641946850a8",
+      "upstream": "https://github.com/uos/lvr2 tag 20.11.3 = commit 9bb03a30441b027c39db967318877e03725112d5 (2021-10-08, also HEAD of branch 'master')",
+      "why_not_source_default_branch": "SLAMesh's Dockerfile clones the lvr2 default branch unpinned; today that is 'main' (25.2.x, cmake_minimum_required 3.16), which cannot configure with CMake 3.10.2 on Ubuntu 18.04.",
+      "not_cloned_locally": true
+    },
+    "ceres_solver": {
+      "url": "https://github.com/ceres-solver/ceres-solver",
+      "tag": "2.1.0",
+      "tag_object": "783637a6ed285abc6c57b16ccd968c594a91b35f",
+      "sha": "f68321e7de8929fbcdb95dd42877531e64f72f66",
+      "commit_date": "2022-03-28T07:02:35-07:00",
+      "why": "SLAMesh README section 2.1 and docker/Dockerfile line 17 require Ceres 2.0 or 2.1 and clone tag 2.1.0.",
+      "not_cloned_locally": true
+    },
+    "official_image_reference_only": {
+      "image": "pleaserun/rjy_slam_work:slamesh_18.04",
+      "manifest_digest": "sha256:33832e01972f12f894f2766f393cc387ed04ac1dcbbd3a2eba52218c5406ee27",
+      "config_digest": "sha256:6ac77825379742050f52fc6d1f44a4a79e3362592d92bbe4aa3babaa337fb51e",
+      "compressed_size_bytes": 2323259706,
+      "layers": 11,
+      "last_pushed": "2023-08-14T07:12:51Z",
+      "image_created": "2023-08-14T07:08:38Z",
+      "provenance": "Third-party Ubuntu 18.04 + ROS Melodic desktop-full + XFCE/VNC/SSH base (built 2020-04-15, maintainer 'Chen Wang') plus one 'docker commit' layer of about 1.15 GB compressed made on 2023-08-14 with no recorded build commands. The SLAMesh README (Docker option 2) says to clone and build SLAMesh inside it, so the SLAMesh commit used with it is not recorded in the image.",
+      "queried_via": "Docker Hub API and registry manifest/config endpoints only; no layers were pulled"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+# One-at-a-time sensitivity design, Plan A (decided by Nahuel on 12 October 2026). Levels from the
+# reviewed draft tuning_levels.yaml; selection rule in configs/SENSITIVITY_DESIGN.md.
+method: aloam
+status: LOCKED
+sequence: cf_5
+parameters:
+  - {id: d, name: nearby scan, unit: scan lines, module: FE, default: 2.5, levels: [1.5, 4],
+     changes: [{constant: NEARBY_SCAN}]}
+  - {id: e, name: Huber loss (odometry), unit: m, module: FE, default: 0.1, levels: [0.05, 0.2],
+     changes: [{constant: ODOM_HUBER_DELTA}]}
+  - {id: f, name: Huber loss (mapping), unit: m, module: BE, default: 0.1, levels: [0.05, 0.2],
+     changes: [{constant: MAPPING_HUBER_DELTA}]}
+  - {id: c, name: plane resolution, unit: m, module: BE, default: 0.4, levels: [0.2, 0.8],
+     changes: [{launch_param: mapping_plane_resolution, launch_file: aloam_velodyne_VLP_16.launch}]}

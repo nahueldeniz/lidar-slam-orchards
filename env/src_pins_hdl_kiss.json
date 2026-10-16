@@ -1,0 +1,98 @@
+{
+  "_comment": "Source pins for hdl Graph SLAM (hdl) and KISS-ICP (kiss). Written 2026-10-12 from local clones in env/src/hdl and env/src/kiss. Nothing has been built yet (Docker builds deferred for disk space). Dates are git committer dates.",
+  "hdl": {
+    "hdl_graph_slam": {
+      "url": "https://github.com/koide3/hdl_graph_slam",
+      "branch": "master",
+      "sha": "95b8dce41c10667dcf0e3e9801dc22754b3bd525",
+      "commit_date": "2024-07-16T10:39:14+09:00",
+      "subject": "Update README.md",
+      "local_clone": "env/src/hdl/hdl_graph_slam",
+      "ros_version": "ROS 1 (catkin; package.xml buildtool_depend catkin)",
+      "branch_note": "master is the ROS 1 code. The repository has NO ROS 2 branch: remote branches are back, koide3-patch-1, master, ndt_params, pub_status, travis_test, vgicp_cuda. The README only links a third-party ROS 2 derivative (aserbremen/Multi-Robot-Graph-SLAM). The master HEAD commit only edits README.md, so the code equals its parent.",
+      "patches": [
+        "env/patches/hdl/0001-keyframe-dump-full-precision.patch (logging only: dump 'data' files written with max_digits10 instead of 6 significant digits)"
+      ]
+    },
+    "ndt_omp": {
+      "url": "https://github.com/koide3/ndt_omp",
+      "branch": "melodic",
+      "sha": "6f4e5f3e09b477c6bb678774a92f9150b14baefd",
+      "commit_date": "2022-12-27T12:13:04+09:00",
+      "subject": "Merge pull request #59 from err4o4/patch-1",
+      "local_clone": "env/src/hdl/ndt_omp (checked out on local branch 'melodic')",
+      "justification": "hdl README, Melodic instructions: 'git clone https://github.com/koide3/ndt_omp.git -b melodic' (docker/melodic_llvm/Dockerfile does the same). Note the inconsistency upstream: docker/melodic/Dockerfile (GCC) clones ndt_omp master (5495fd9, 2024-08-31), which has PCL-version guards and also builds on PCL 1.8.1 but adds an NDT Hessian sign fix (commit 940c2c5). The choice cannot affect results here: with registration_method FAST_GICP no pclomp class is executed (registrations.cpp:27-35 returns before any NDT_OMP/GICP_OMP branch); ndt_omp is only a build dependency.",
+      "alternative_not_used": {"branch": "master", "sha": "5495fd9214945afcb4b35d5a1da385e405c52bf9", "commit_date": "2024-08-31T22:05:27+09:00"}
+    },
+    "fast_gicp": {
+      "url": "https://github.com/SMRT-AIST/fast_gicp",
+      "branch": "master",
+      "sha": "0e7ec1441c99f7be453db2ea216d5de029387417",
+      "commit_date": "2025-04-24T10:46:47+09:00",
+      "subject": "Update issue_response.yml",
+      "local_clone": "env/src/hdl/fast_gicp",
+      "justification": "hdl README (Melodic and Noetic) and docker/melodic/Dockerfile clone fast_gicp master with --recursive and no pin, so master HEAD is the recommended state. Commits after the hdl pin date (2024-07-16): df839a8 (2024-08-31, adds a pcl::PointXYZRGB template instantiation), 59886db (2025-02-21, Python bindings use system pybind11), 0e7ec14 (CI/issue bot only). None changes the PointXYZI FastGICP code path used by hdl.",
+      "submodules": "thirdparty/Eigen, thirdparty/Sophus, thirdparty/nvbio are referenced only under BUILD_VGICP_CUDA=ON (CMakeLists.txt:113-157, the if(BUILD_VGICP_CUDA) block), so they are not fetched; the CPU build uses system Eigen 3.3.4 and PCL 1.8.1.",
+      "pcl_compat": "pcl::shared_ptr vs boost::shared_ptr guarded by PCL_VERSION >= 1.10 (include/fast_gicp/gicp/fast_gicp.hpp:33), so PCL 1.8.1 uses boost::shared_ptr."
+    },
+    "g2o": {
+      "source": "apt",
+      "package": "ros-melodic-libg2o",
+      "version": "2018.3.25-0bionic.20201015.025147",
+      "justification": "hdl README Melodic instructions ('sudo apt-get install ... ros-melodic-libg2o'), package.xml build_depend libg2o, docker/melodic*/Dockerfile install ros-melodic-libg2o. cmake/FindG2O.cmake searches /opt/ros/$ROS_DISTRO first. The default solver lm_var_cholmod needs CHOLMOD, which this package links (depends on libcholmod3, libcxsparse3, libsuitesparse-dev). Version read from packages.ros.org dists/bionic/main/binary-amd64/Packages on 2026-10-12 (repository frozen after Melodic EOL; InRelease dated 2024-09-13)."
+    },
+    "apt_pins": {
+      "ros-melodic-libg2o": "2018.3.25-0bionic.20201015.025147",
+      "ros-melodic-geodesy": "0.5.3-0bionic.20221025.200855",
+      "ros-melodic-nmea-msgs": "1.1.0-0bionic.20221025.180322",
+      "ros-melodic-interactive-markers": "1.11.5-1bionic.20221025.194647",
+      "note": "interactive_markers is a find_package(catkin COMPONENTS ...) requirement of hdl's CMakeLists.txt (line 23); upstream obtains it through ros-melodic-rviz, which is not installed here."
+    },
+    "build": {
+      "verdict": "Feasible on the Melodic base with the stock toolchain (CMake 3.10.2, GCC 7.5, PCL 1.8.1, Eigen 3.3.4, Boost 1.65). No build-fix patch needed. Not yet verified by an actual build.",
+      "cxx_standard": "C++14 (hdl CMakeLists.txt:10-11 and ndt_omp CMakeLists.txt set -std=c++14 plus -msse..-msse4.2 on x86_64); fast_gicp sets no standard, so GCC 7.5's default gnu++14 applies; no C++17 features found in fast_gicp.",
+      "cmake": "cmake_minimum_required 2.8.3 (hdl, ndt_omp melodic) and 3.10.0 (fast_gicp): 3.10.2 is enough.",
+      "openmp": "find_package(OpenMP) with GCC's libgomp in all three packages; no issue expected. libomp-dev (installed by upstream Dockerfiles) is only needed for their clang builds. reg_num_threads 0 means omp_get_max_threads() (include/fast_gicp/gicp/impl/fast_gicp_impl.hpp:30-35), i.e. all 16 hardware threads of the benchmark laptop unless OMP_NUM_THREADS is set; record it.",
+      "build_type": "hdl and ndt_omp force CMAKE_BUILD_TYPE RELEASE, fast_gicp forces Release; catkin_make is also given -DCMAKE_BUILD_TYPE=Release.",
+      "upstream_evidence": "README badge claims CI builds on melodic and noetic (.github/workflows/build.yml matrix melodic, melodic_llvm, noetic, noetic_llvm using docker/<distro>/Dockerfile). The Actions run history for the pinned SHAs is no longer available (checked with the GitHub API on 2026-10-12).",
+      "noetic_fallback": "Not advisable unless the Melodic build fails; no Melodic-specific obstacle was found."
+    }
+  },
+  "kiss": {
+    "kiss-icp": {
+      "url": "https://github.com/PRBonn/kiss-icp",
+      "tag": "v0.3.0",
+      "tag_type": "lightweight (git cat-file -t v0.3.0 = commit)",
+      "sha": "460c6f2cc3616c122c42006898036df9c20b636f",
+      "commit_date": "2024-02-22T14:27:36+01:00",
+      "subject": "Fix (hopefully) cibuildwheel (#278)",
+      "local_clone": "env/src/kiss/kiss-icp (detached HEAD at v0.3.0)",
+      "ros1_note": "Confirmed last release with ROS 1: v0.4.0 (c6224a1, 2024-02-29) contains 'Nacho/remove ros 1 support (#280)' and has no ros/ros1 directory.",
+      "patches": []
+    },
+    "fetchcontent_dependencies": {
+      "_comment": "Upstream fetches these at configure time when no system package is found (cpp/kiss_icp/3rdparty/find_dependencies.cmake). The Dockerfile pre-downloads them, checks SHA-256 and points FETCHCONTENT_SOURCE_DIR_<NAME> at them. SHA-256 computed 2026-10-12.",
+      "sophus": {"url": "https://github.com/nachovizzo/Sophus/archive/refs/tags/1.22.11.tar.gz", "sha256": "0a8a2c39fed766ab958b274c0cf2858e7812c20f83d04b8bbf9b61b840f8d126", "use_system": false, "note": "no CMake-config Sophus on Ubuntu 18.04; requires Eigen >= 3.3.0; SOPHUS_USE_BASIC_LOGGING ON (no fmt)"},
+      "oneTBB": {"url": "https://github.com/oneapi-src/oneTBB/archive/refs/tags/v2021.8.0.tar.gz", "sha256": "eee380323bb7ce864355ed9431f85c43955faaae9e9bce35c62b372d7ffd9f8b", "use_system": false, "note": "Ubuntu 18.04 libtbb-dev is TBB 2017 U7; USE_SYSTEM_TBB=OFF makes the choice deterministic. oneTBB supports GCC 4.8.5-11.1 (SYSTEM_REQUIREMENTS.md). Inside catkin, BUILD_SHARED_LIBS is already ON, so tbb.cmake's option(BUILD_SHARED_LIBS OFF) has no effect and libtbb is built shared in /ws/build."},
+      "tsl-robin-map": {"url": "https://github.com/Tessil/robin-map/archive/refs/tags/v1.2.1.tar.gz", "sha256": "2b54d2c1de2f73bea5c51d5dcbd64813a08caf1bfddcfdeee40ab74e9599e8e3", "use_system": false, "note": "header-only; FetchContent name 'tessil'"},
+      "eigen": {"use_system": true, "version": "3.3.4 (libeigen3-dev, Ubuntu 18.04)", "fetch_url_if_not_system": "https://github.com/nachovizzo/eigen/archive/refs/tags/3.4.90.tar.gz", "fetch_sha256": "bcccb52aaf6864f8dafbb3384241f6f03bc52a86efc21eff1e2e795642a08d26", "note": "Upstream default USE_SYSTEM_EIGEN3=ON; its ROS 1 CI (Noetic) used system Eigen 3.3.7. Check done here: every core/pipeline .cpp of v0.3.0 passes g++ 11.4 -std=c++17 -fsyntax-only with upstream's -Werror warning set against Eigen 3.3.4 + Sophus 1.22.11 + robin-map 1.2.1 + oneTBB 2021.8 headers."}
+    },
+    "cmake_binary": {"version": "3.25.3", "url": "https://github.com/Kitware/CMake/releases/download/v3.25.3/cmake-3.25.3-linux-x86_64.tar.gz", "sha256": "d4d2ba83301b215857d3b6590cd4434a414fa151c5807693abe587bd6c03581e", "sha256_source": "cmake-3.25.3-SHA-256.txt from the same release"},
+    "compiler": {"package": "g++-8", "version": "8.4.0-1ubuntu1~18.04", "archive": "Ubuntu bionic-updates/universe (official archive, no PPA)", "libstdc++6_on_bionic": "8.4.0-1ubuntu1~18.04 (already the runtime of the Melodic base)"},
+    "build": {
+      "verdict": "Feasible on Melodic only with a newer CMake and GCC than Ubuntu 18.04 ships; no source patch needed. Not yet verified by an actual build.",
+      "cmake_requirement": "cmake_minimum_required(VERSION 3.16...3.26) in ros/CMakeLists.txt:23 and cpp/kiss_icp/CMakeLists.txt:23, but in practice >= 3.25: 3rdparty/sophus/sophus.cmake and 3rdparty/tsl_robin/tsl_robin.cmake call FetchContent_Declare(<name> SYSTEM URL ...), and SYSTEM was added to FetchContent_Declare in CMake 3.25. Upstream CI (.github/workflows/ros.yml, cpp.yml) installs CMake 3.25.x even on Noetic. Chosen: Kitware binary 3.25.3 in /opt/cmake (checksum-verified). pip 'cmake' is not used: Ubuntu 18.04's pip 9 cannot install manylinux2014 wheels without first upgrading pip, and a tarball is simpler to checksum.",
+      "compiler_requirement": "Core library: target_compile_features cxx_std_17 (cmake/CompilerOptions.cmake), structured bindings etc.; GCC 7.5 would suffice for the core. ROS 1 node: target_compile_features(odometry_node PUBLIC cxx_std_20) (ros/CMakeLists.txt:60) and a C++20 template-parameter lambda '[&msg]<typename T>(...)' in ros/ros1/Utils.hpp (ExtractTimestampsFromMsg). CMake maps cxx_std_20 only for GCC >= 8 (-std=gnu++2a), and GCC 8 implements P0428R2. So GCC 7.5 cannot build the node; g++-8 from the Ubuntu archive is the minimal change (the brief's 'C++17 compiler' understates this). g++-9 from the ubuntu-toolchain-r/test PPA is not needed and would upgrade libstdc++6 system-wide.",
+      "warnings_as_errors": "cmake/CompilerOptions.cmake adds -Werror -Wall -Wextra -pedantic -Wcast-align -Wcast-qual -Wconversion -Wdisabled-optimization -Woverloaded-virtual for GNU on core/pipeline/metrics. Third-party headers are SYSTEM (imported Eigen3::Eigen; FetchContent SYSTEM for Sophus/robin-map; add_subdirectory SYSTEM for oneTBB with CMake >= 3.25). GCC 8-specific warnings in KISS's own code are the main residual risk.",
+      "lto_note": "oneTBB compiles with -flto (TBB_ENABLE_IPO ON by default); CMAKE_AR/CMAKE_RANLIB are set to gcc-ar-8/gcc-ranlib-8 so archives are indexed with the matching LTO plugin.",
+      "ros_headers_in_cxx2a": "The node includes ROS Melodic and Boost 1.65 headers compiled as gnu++2a with GCC 8. No known incompatibility, but this combination is untested upstream (upstream tested Noetic/GCC 9).",
+      "noetic_fallback": "Advisable only if the Melodic image fails to build (most likely causes: a GCC 8 -Werror warning in KISS code, or a Boost 1.65/ROS Melodic header problem under gnu++2a). Noetic (Ubuntu 20.04: GCC 9.4, Eigen 3.3.7, CMake 3.16.3 + Kitware 3.25) is exactly upstream's ROS 1 CI configuration. Record the reason if used (brief Section 3)."
+    }
+  },
+  "open_questions": [
+    "Brief/task say hdl's ROS 2 code lives on another branch; no ROS 2 branch exists in koide3/hdl_graph_slam. Nothing to do, but the brief text should be corrected.",
+    "ndt_omp: README says '-b melodic' (pinned) while upstream docker/melodic/Dockerfile uses master. Irrelevant to results with FAST_GICP; confirm the README choice is acceptable.",
+    "The ROS apt repository is signed with key F42ED6FBAB17C654 (InRelease 2024-09-13). If the key stored in the ros:melodic-perception-bionic image has expired, apt-get update fails in the base and both method images; the base-image owner should check this before building.",
+    "Builds are unverified (no Docker builds allowed now). Both images keep upstream build flags; KISS uses GCC 8 + CMake 3.25.3, which is the main risk; Noetic fallback criteria above."
+  ]
+}

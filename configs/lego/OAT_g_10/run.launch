@@ -1,0 +1,38 @@
+<launch>
+    <!-- [slambench] Configuration D of LeGO-LOAM. Copied from LeGO-LOAM/launch/run.launch at
+         896a7a95a8bc510b76819d4cc48707e344bad621. Every line that differs from upstream carries a [slambench] comment.
+         LeGO-LOAM reads no ROS parameters: all algorithm settings are compile-time constants in include/utility.h,
+         listed for D in configs/lego/D/constants.env and printed by every node at start-up ('[slambench-constants]'). -->
+
+    <!-- [slambench] added: input topic. Upstream hard-codes pointCloudTopic = "/velodyne_points" (utility.h:53);
+         the default below is a no-op remap. Override only if a dataset uses another LiDAR topic. -->
+    <arg name="lidar_topic" default="/velodyne_points" /> <!-- [slambench] added -->
+
+    <!--- Sim Time -->
+    <!-- [slambench] note (line unchanged): the run protocol (brief Section 6, step 2) also sets /use_sim_time true on
+         the fresh roscore before this file is launched; both agree. With sim time, the nodes' ros::Rate loops
+         (featureAssociation and mapOptmization, 200 Hz) are paced by the /clock topic published by rosbag play (clock option). -->
+    <param name="/use_sim_time" value="true" />
+
+    <!--- Run Rviz-->
+    <!-- [slambench] removed: <node pkg="rviz" type="rviz" name="rviz" args="-d $(find lego_loam)/launch/test.rviz" /> (no visualisation, brief Section 0.6 and P7) -->
+
+    <!--- TF -->
+    <!-- [slambench] note (lines unchanged): no LeGO-LOAM node looks up TF; these two static transforms only define the
+         frames used to convert outputs to the LiDAR frame (configs/lego/source_audit.md, Section 3). -->
+    <node pkg="tf" type="static_transform_publisher" name="camera_init_to_map"  args="0 0 0 1.570795   0        1.570795 /map    /camera_init 10" />
+    <node pkg="tf" type="static_transform_publisher" name="base_link_to_camera" args="0 0 0 -1.570795 -1.570795 0        /camera /base_link   10" />
+
+    <!--- LeGO-LOAM -->
+    <node pkg="lego_loam" type="imageProjection"    name="imageProjection"    output="screen"> <!-- [slambench] changed: tag opened to hold a remap (upstream: self-closing) -->
+        <remap from="/velodyne_points" to="$(arg lidar_topic)" /> <!-- [slambench] added: input topic remap (no-op by default) -->
+    </node> <!-- [slambench] added: closes the node tag opened above -->
+    <node pkg="lego_loam" type="featureAssociation" name="featureAssociation" output="screen"> <!-- [slambench] changed: tag opened to hold a remap (upstream: self-closing) -->
+        <remap from="/imu/data" to="/slambench/imu_disabled" /> <!-- [slambench] added: LiDAR only; the IMU subscription (featureAssociation.cpp:193) can never receive bag IMU data -->
+    </node> <!-- [slambench] added: closes the node tag opened above -->
+    <node pkg="lego_loam" type="mapOptmization"     name="mapOptmization"     output="screen"> <!-- [slambench] changed: tag opened to hold a remap (upstream: self-closing) -->
+        <remap from="/imu/data" to="/slambench/imu_disabled" /> <!-- [slambench] added: LiDAR only; the IMU subscription (mapOptmization.cpp:242) can never receive bag IMU data -->
+    </node> <!-- [slambench] added: closes the node tag opened above -->
+    <node pkg="lego_loam" type="transformFusion"    name="transformFusion"    output="screen"/>
+
+</launch>

@@ -1,0 +1,14 @@
+# reason: build fix only - add_compile_definitions() needs CMake >= 3.12 but Ubuntu 18.04/Melodic ships 3.10.2; add_definitions(-DHAS_CPUID) defines the same macro for the same targets (CPU-name printout only).
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 57c2e4b..244820b 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -74,7 +74,7 @@ file(WRITE ${CMAKE_BINARY_DIR}/test_cpuid.cpp "#include <cpuid.h>")
+ try_compile(HAS_CPUID ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/test_cpuid.cpp)
+ file(REMOVE ${CMAKE_BINARY_DIR}/test_cpuid.cpp)
+ if(HAS_CPUID)
+-  add_compile_definitions(HAS_CPUID)
++  add_definitions(-DHAS_CPUID)  # build fix: add_compile_definitions() needs CMake >= 3.12; Melodic has 3.10.2
+ endif()
+ 
+ # NanoFLANN

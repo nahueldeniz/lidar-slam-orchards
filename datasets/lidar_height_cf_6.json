@@ -1,0 +1,13 @@
+{
+  "seq": "cf_6",
+  "scans_used": 100,
+  "scans_requested": 100,
+  "height_median_m": 0.43346680664905246,
+  "height_iqr_m": [
+    0.43248634596716645,
+    0.4362791652579909
+  ],
+  "plane_tilt_median_deg": 1.861676814762828,
+  "inliers_median": 7123.5,
+  "method": "RANSAC plane, points 2-20 m horizontal range below the sensor, 5 cm threshold, normal within 20 deg of LiDAR z, least-squares refit"
+}

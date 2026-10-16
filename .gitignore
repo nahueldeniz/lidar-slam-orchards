@@ -1,0 +1,37 @@
+# Python environment and caches
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+eval/tests/synthetic_results/
+
+# Demo data and outputs (never committed; the bag is downloaded from CitrusFarm)
+demo_data/
+demo_output/
+demo_output.*/
+logs/
+
+# Dataset files (never redistributed; README, "Data")
+*.bag
+*.bag.active
+*.part
+datasets/citrusfarm/raw/
+datasets/citrusfarm/ground_truth/
+datasets/citrusfarm/calibration/
+datasets/citrusfarm/download_script/
+datasets/pullally/DS_P1_20230806/
+datasets/pullally/ground_truth/
+
+# Run outputs, results, figures and tables: in the Zenodo package (DOI 10.5281/zenodo.23405930)
+runs/
+runs_dry/
+baselines/
+figs/
+tables/
+eval/*.csv
+eval/maps/
+env/build_logs/
+env/machine.json
+
+# Upstream source clones (the Dockerfiles fetch the pinned commits themselves)
+env/src/

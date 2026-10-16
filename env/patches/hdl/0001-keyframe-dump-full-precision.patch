@@ -1,0 +1,22 @@
+# reason: logging only - KeyFrame::save() writes the dumped 'estimate'/'odom' matrices with the iostream default of 6 significant digits (1 cm resolution beyond 1 km); set max_digits10 so the dump is lossless. No algorithm change.
+diff --git a/src/hdl_graph_slam/keyframe.cpp b/src/hdl_graph_slam/keyframe.cpp
+index 99edbae..e772110 100644
+--- a/src/hdl_graph_slam/keyframe.cpp
++++ b/src/hdl_graph_slam/keyframe.cpp
+@@ -2,6 +2,8 @@
+ 
+ #include <hdl_graph_slam/keyframe.hpp>
+ 
++#include <iomanip>
++#include <limits>
+ #include <boost/filesystem.hpp>
+ 
+ #include <pcl/io/pcd_io.h>
+@@ -24,6 +26,7 @@ void KeyFrame::save(const std::string& directory) {
+   }
+ 
+   std::ofstream ofs(directory + "/data");
++  ofs << std::setprecision(std::numeric_limits<double>::max_digits10);  // logging only: write poses without rounding
+   ofs << "stamp " << stamp.sec << " " << stamp.nsec << "\n";
+ 
+   ofs << "estimate\n";

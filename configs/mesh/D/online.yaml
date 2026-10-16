@@ -1,0 +1,52 @@
+# SLAMesh configuration D (default) for the orchard re-run.
+# Copy of SLAMesh config/online.yaml at commit 50b4356e8a24c4fe2e2dc1be37d682e703843314.
+# Lines that differ from upstream end with "# CHANGED: ...". Lines that are not in the upstream
+# file but are read by the code end with "# ADDED: ..." and carry the code default
+# (slamesher_node.cpp:486-543), so every parameter the node reads is explicit.
+# "# NOTE:" comments are explanations only.
+# Loaded at global scope by slamesh_online_D.launch, i.e. as /slamesher/<name>.
+slamesher:
+  # play ros bag or run it in mobile robot, the configuration used in our real-world demo, the sensor is an ouster OS1-32 lidar
+  #read param
+  use_sim_time: true      # NOTE: sets /slamesher/use_sim_time, NOT the global /use_sim_time, and the code never reads it; the run protocol sets /use_sim_time itself
+  grt_available: false    # NOTE: false = no ground-truth subscriptions (/pose, /mavros/local_position/odom)
+  odom_available: false   # NOTE: false = no odometry/altitude subscriptions (/odom, /mavros/global_position/rel_alt); LiDAR only
+  read_offline_pcd: false # NOTE: false = read /velodyne_points (remapped) and stamp outputs with the scan stamp
+  dataset: 1              # NOTE: only used when read_offline_pcd is true
+  max_steps: 10000        # NOTE: only pre-sizes log arrays (extended automatically); it does NOT stop processing
+  save_mesh_map: true     # NOTE: writes <result_path>/<seq>_mesh.ply at shutdown; no effect on the trajectory
+  #register param
+  range_max: 60           # NOTE: [m]; points farther than this are dropped (only applied if range_max <= 100)
+  range_min: 0.5          # NOTE: [m]; points closer than this are dropped (upstream value since 2025-01-05; was 3.0)
+  register_times: 5       # NOTE: maximum scan-to-map iterations (stops earlier if the update < 1e-5)
+  cross_overlap: true     # NOTE: read but never used by the code
+  cross_cell_overlap_length: 1
+  num_margin_old_cell: -1 # NOTE: [scan steps]; -1 = never exclude old cells (upstream value since 2025-01-05; was 500)
+  point2mesh: true        # NOTE: point-to-mesh registration; makes variance_min inactive
+  residual_combination: false  # NOTE: upstream value since 2025-01-05 (was true)
+  #visualize parameter
+  meshing_tsdf: false     # NOTE: read but never used by the code
+  full_cover: true
+  visualisation_type: 0   # CHANGED: upstream 3 (global mesh every 50 scans). 0 is the lightest mode; visualisation only reads the map, so the trajectory is unaffected (slamesher_node.cpp:734-799)
+  #gp param
+  num_thread: 8           # NOTE: OpenMP threads for per-cell GP reconstruction; Ceres runs single-threaded
+  grid: 1.2               # NOTE: [m] cell edge; the input voxel leaf is grid/num_test = 0.2 m
+  min_points_num_to_gp: 3 # NOTE: a cell is GP-reconstructed only if it holds MORE than this many points
+  num_test: 6             # NOTE: test points per cell side (6 x 6 vertices per layer)
+
+  variance_register: 0.60
+  variance_map_update: 0.50
+  variance_map_show: 0.20  # NOTE: visualisation and saved mesh only
+  variance_min: 1.36       # NOTE: INACTIVE with point2mesh true (only used by the point-to-point solver Map::computeT)
+  variance_sensor: 0.02    # NOTE: GP noise standard deviation; enters the kernel diagonal squared (cell.cpp:170)
+
+  test_param:  0           # NOTE: read but never used by the code
+
+  imu_feedback: false            # ADDED: code default (slamesher_node.cpp:491); IMU bias feedback off
+  range_unit: 1.0                # ADDED: code default (slamesher_node.cpp:503); read but never used
+  correction_x: 0.0              # ADDED: code default; initial pose correction [m] (identity)
+  correction_y: 0.0              # ADDED: code default
+  correction_z: 0.0              # ADDED: code default
+  correction_roll_degree: 0.0    # ADDED: code default [deg]
+  correction_pitch_degree: 0.0   # ADDED: code default [deg]
+  correction_yaw_degree: 0.0     # ADDED: code default [deg]

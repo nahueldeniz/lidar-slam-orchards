@@ -1,0 +1,14 @@
+# One-at-a-time sensitivity design, Plan A (decided by Nahuel on 12 October 2026). Levels from the
+# reviewed draft tuning_levels.yaml; selection rule in configs/SENSITIVITY_DESIGN.md.
+method: kiss
+status: LOCKED
+sequence: cf_5
+parameters:
+  - {id: a, name: initial threshold, unit: m, module: FE, default: 2.0, levels: [1.0, 4.0],
+     changes: [{launch_arg: initial_threshold}]}
+  - {id: c, name: max. points per voxel, unit: points, module: FE, default: 20, levels: [10, 50],
+     changes: [{launch_arg: max_points_per_voxel}]}
+  - {id: d, name: voxel size, unit: m, module: FE, default: 1.0, levels: [0.5, 2.0],
+     changes: [{launch_arg: voxel_size}]}
+  - {id: e, name: minimum range, unit: m, module: FE, default: 5.0, levels: [2.5, 0.5],
+     changes: [{launch_arg: min_range}]}

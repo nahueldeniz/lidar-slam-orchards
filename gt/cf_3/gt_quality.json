@@ -1,0 +1,85 @@
+{
+  "seq": "cf_3",
+  "gt_bag": "citrusfarm/ground_truth/03_13B_Jackal/gt.bag",
+  "topic": "/gps/fix/odometry",
+  "msgtype": "nav_msgs/msg/Odometry",
+  "frame_ids": [
+    "rtk_path_frame"
+  ],
+  "child_frame_ids": [],
+  "count": 17079,
+  "t_start": 1689560240.972558,
+  "t_end": 1689561948.671612,
+  "span_s": 1707.6990540027618,
+  "median_rate_hz": 10.016021129072893,
+  "gap_threshold_s": 0.2,
+  "gaps": [],
+  "n_duplicate_stamps": 0,
+  "orientation_populated": false,
+  "path_length_3d_all_samples_m": 2035.2154341512444,
+  "path_length_3d_min_step_m": 2030.63831484106,
+  "path_length_published_m": 2035.2,
+  "position_first": [
+    0.0,
+    -0.0,
+    0.0
+  ],
+  "pose_covariance_populated_fraction": 0.0,
+  "rtk": {
+    "status": "ok",
+    "topic": "/piksi/navsatfix_best_fix",
+    "count": 17079,
+    "median_rate_hz": 10.016021129072893,
+    "fix_status_counts": {
+      "GBAS fix": 17079
+    },
+    "fix_status_percent": {
+      "GBAS fix": 100.0
+    },
+    "covariance_type_values": [
+      1
+    ],
+    "sigma_enu_m": {
+      "E": {
+        "median": 0.06999999999999999,
+        "p95": 0.06999999999999999,
+        "max": 0.06999999999999999,
+        "n_unique": 1
+      },
+      "N": {
+        "median": 0.06999999999999999,
+        "p95": 0.06999999999999999,
+        "max": 0.06999999999999999,
+        "n_unique": 1
+      },
+      "U": {
+        "median": 0.1,
+        "p95": 0.1,
+        "max": 0.1,
+        "n_unique": 1
+      }
+    },
+    "receiver_state": {
+      "topic": "/piksi/debug/receiver_state",
+      "num_sat": {
+        "min": 40,
+        "median": 44.0,
+        "max": 49
+      },
+      "fix_mode_counts": {
+        "FIXED_RTK": 22210
+      }
+    },
+    "enu_consistency": {
+      "n": 17079,
+      "rms_3d_m": 0.054979718730956015,
+      "rms_horizontal_m": 0.054973738497029405,
+      "rms_vertical_m": 0.0008108929616555741,
+      "gt_to_enu_rotation_zyx_deg": [
+        90.0000614574723,
+        0.0006445681351694085,
+        -0.00018696357285429878
+      ]
+    }
+  }
+}

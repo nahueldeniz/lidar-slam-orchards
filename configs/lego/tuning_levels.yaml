@@ -1,0 +1,91 @@
+# DRAFT - LeGO-LOAM tuning levels (brief Section 5.0, steps 1-2). Not frozen; awaiting review by Nahuel.
+# One-at-a-time design: each run = configuration D with exactly one parameter set to one level.
+# Every level is a separate image (compile-time constant): docker build --build-arg <build_arg>=<level>.
+# Justification for each parameter and level: configs/lego/tuning_rationale.md.
+status: DRAFT
+method: lego
+source_commit: 896a7a95a8bc510b76819d4cc48707e344bad621
+base_configuration: D            # configs/lego/D (no overrides)
+tuning_sequences: [cf_4, cf_5]
+excluded_from_tuning:
+  - key: scanPeriod
+    reason: sensor setting, not a tuned parameter (brief Section 5.0); kept at 0.1 s, see source_audit.md Section 2.3
+  - key: edgeFeatureNum
+    reason: declared in utility.h:120 but never referenced; featureAssociation.cpp:709 hard-codes 2 (changing it has no effect)
+  - key: surfFeatureNum
+    reason: declared in utility.h:121 but never referenced; featureAssociation.cpp:747 hard-codes 4 (changing it has no effect)
+  - key: loopClosureEnableFlag
+    reason: kept false as the brief requires (utility.h:104, upstream default false)
+
+parameters:
+  - id: a
+    paper_name: mapping process interval
+    key: mappingProcessInterval
+    location: include/utility.h:105
+    build_arg: MAPPING_PROCESS_INTERVAL
+    unit: s
+    module: BE
+    default: 0.3
+    levels: [0.15, 0.6]
+    level_rule: "x0.5 and x2"
+    submitted: {P1: 0.3, P2: 0.3, P3: 0.3}
+    note: >-
+      Effective mapping period is quantised, because featureAssociation sends features to mapping on every second
+      scan only (featureAssociation.cpp:1792). At 10 Hz: 0.15 -> every 0.2 s, 0.3 -> 0.4 s, 0.6 -> 0.6 s (three
+      distinct levels). At 4 Hz the default and 0.15 both give 0.5 s.
+
+  - id: b
+    paper_name: segment theta
+    key: segmentTheta
+    location: include/utility.h:113
+    build_arg: SEGMENT_THETA_DEG
+    unit: deg (rad in code)
+    module: FE+BE (pre-processing in imageProjection; feeds odometry and mapping)
+    default: 60
+    levels: [10, 30]
+    level_rule: "submitted P1 and P2 (30 = x0.5); x2 = 120 deg is not physically meaningful (see rationale)"
+    submitted: {P1: 10, P2: 30, P3: 60}
+
+  - id: d
+    paper_name: edge threshold
+    key: edgeThreshold
+    location: include/utility.h:123
+    build_arg: EDGE_THRESHOLD
+    unit: "curvature (m^2, as computed in featureAssociation.cpp:626-633)"
+    module: FE (feature extraction; the extracted features also feed mapping)
+    default: 0.1
+    levels: [0.05, 0.2]
+    level_rule: "x0.5 and x2"
+    submitted: {P1: 0.1, P2: 0.1, P3: 0.1}
+
+  - id: f
+    paper_name: planar threshold
+    key: surfThreshold
+    location: include/utility.h:124
+    build_arg: SURF_THRESHOLD
+    unit: "curvature (m^2, as computed in featureAssociation.cpp:626-633)"
+    module: FE (feature extraction; the extracted features also feed mapping)
+    default: 0.1
+    levels: [0.05, 0.2]
+    level_rule: "x0.5 and x2"
+    submitted: {P1: 0.1, P2: 0.1, P3: 0.1}
+
+  - id: g
+    paper_name: nearest-feature search distance (squared)
+    key: nearestFeatureSearchSqDist
+    location: include/utility.h:125
+    build_arg: NEAREST_FEATURE_SEARCH_SQ_DIST
+    unit: m^2
+    module: FE (featureAssociation only; mapping uses its own hard-coded 1.0 m^2 gate, mapOptmization.cpp:1101, 1183)
+    default: 25
+    levels: [10, 50]
+    level_rule: "submitted P1 (10, about x0.4) and x2"
+    submitted: {P1: 10, P2: 25, P3: 25}
+
+run_count:
+  single_changes: 10          # 5 parameters x 2 levels
+  per_sequence: 1
+  sequences: 2
+  total_oat_runs: 20
+  plus_d_spread_runs_on_cf_5: 3
+  images_to_build: 11         # D + 10 single-change images

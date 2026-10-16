@@ -1,0 +1,32 @@
+#############################################################
+# DLO configuration D (default) for the orchard re-run.
+# Copy of direct_lidar_odometry cfg/dlo.yaml at commit 11528c02e89a1619ee3c42ba39ecaa992bd20bf4.
+# Lines that differ from upstream end with "# CHANGED: ...".
+# "# NOTE:" comments are explanations only; those lines keep the upstream value.
+# Loaded by dlo_D.launch into both nodes (/robot/dlo_odom and /robot/dlo_map), under ~dlo/.
+#############################################################
+#                                                           #
+# Copyright (c) 2022, University of California, Los Angeles #
+#                                                           #
+# Authors: Kenny J. Chen, Brett T. Lopez                    #
+# Contact: kennyjchen@ucla.edu, btlopez@ucla.edu            #
+#                                                           #
+#############################################################
+
+dlo:
+
+  version: 1.4.3   # NOTE: printed only
+
+  adaptiveParams: true   # NOTE: upstream value, fixed in D and T (brief C5); overrides odomNode/keyframe/threshD on every scan (odom.cc:662-664, 1193-1209)
+
+  imu: false   # CHANGED: upstream true. LiDAR only (brief Section 0.2). With true and no IMU messages DLO never initialises (odom.cc:594-596) and publishes nothing
+  gravityAlign: true   # NOTE: upstream value; inactive because imu is false (odom.cc:599)
+
+  odomNode:
+    odom_frame: odom        # NOTE: published as "robot/odom" (namespace prepended, odom.cc:196-202)
+    child_frame: base_link  # NOTE: published as "robot/base_link"; it is the LiDAR (input cloud) frame, DLO applies no extrinsic
+
+  mapNode:
+    publishFullMap: true   # NOTE: map node only; does not affect odometry
+    publishFreq: 1.0       # NOTE: used as a timer PERIOD in seconds (map.cc createTimer(ros::Duration(publishFreq)))
+    leafSize: 0.25         # NOTE: map node voxel size only; does not affect odometry

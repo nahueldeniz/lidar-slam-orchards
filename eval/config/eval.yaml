@@ -1,0 +1,49 @@
+# Evaluation settings (brief Sections 10-12). Every threshold used by the
+# evaluation lives here; changing one changes every derived number, so this
+# file is hashed into each results file.
+
+# Nominal ground-truth periods are set per sequence in datasets/sequences.yaml
+# (gt_nominal_period_s): 0.1 s for CitrusFarm (10 Hz post-processed RTK) and
+# 0.5 s for Pullally (/fix at 2 Hz, measured; the dataset paper states 1 Hz).
+
+association:
+  # Discard an estimate stamp if the two bracketing ground-truth samples are
+  # more than this many nominal periods apart (Section 11.1).
+  max_gap_periods: 1.5
+
+path_length:
+  # Arc length is accumulated only when the ground-truth position has moved at
+  # least this far from the last accepted vertex, so RTK jitter while the robot
+  # is stationary does not inflate the distance travelled.
+  min_step_m: 0.1
+
+alignment_B:
+  initial_distance_m: 10.0        # use only poses within the first 10 m travelled
+
+segments:
+  lengths_m: [10, 50, 100]
+  min_poses: 5                    # fewer associated poses -> segment skipped
+  min_span_fraction: 0.9          # poses must span >= 90 % of the segment length
+
+turn:
+  heading_baseline_m: 2.0         # heading from positions 1 m behind and 1 m ahead
+  window_m: 5.0                   # compare heading 2.5 m behind with 2.5 m ahead
+  threshold_deg: 30.0
+  mixed_low: 0.2                  # segment is "row" below, "turn" above mixed_high
+  mixed_high: 0.8
+
+heading:
+  baseline_m: 2.0
+  min_speed_mps: 0.3
+  speed_half_window_s: 1.0        # speed = |p(t+h) - p(t-h)| / 2h
+
+time_offset:
+  min_s: -0.5
+  max_s: 0.5
+  step_s: 0.01
+
+divergence:
+  max_jump_m: 5.0                 # jump between consecutive poses flagged as divergence
+
+coverage:
+  min_fraction: 0.95

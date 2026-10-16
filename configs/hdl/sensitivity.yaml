@@ -1,0 +1,14 @@
+# One-at-a-time sensitivity design, Plan A (decided by Nahuel on 12 October 2026). Levels from the
+# reviewed draft tuning_levels.yaml; selection rule in configs/SENSITIVITY_DESIGN.md.
+method: hdl
+status: LOCKED
+sequence: cf_5
+parameters:
+  - {id: a, name: downsample resolution, unit: m, module: FE+BE, default: 0.1, levels: [0.05, 0.3],
+     changes: [{launch_arg: downsample_resolution}]}
+  - {id: f, name: max. correspondence distance, unit: m, module: FE+BE, default: 2.0, levels: [1.0, 3.0],
+     changes: [{launch_arg: reg_max_correspondence_distance}]}
+  - {id: c_fe, name: keyframe delta translation (odometry), unit: m, module: FE+BE, default: 1.0, levels: [0.5, 2.0],
+     changes: [{launch_arg: fe_keyframe_delta_trans}]}
+  - {id: c_be, name: keyframe delta translation (graph), unit: m, module: BE, default: 2.0, levels: [1.0, 4.0],
+     changes: [{launch_arg: be_keyframe_delta_trans}]}

@@ -1,0 +1,91 @@
+# reason: build-time configuration only - lets the utility.h constants of brief tables 5.3 and the scan period be overridden per image via -DSLAMBENCH_DEFS; upstream lines kept verbatim, so no override = upstream values (no algorithm change).
+diff --git a/LeGO-LOAM/CMakeLists.txt b/LeGO-LOAM/CMakeLists.txt
+index efebe5b..3f52667 100755
+--- a/LeGO-LOAM/CMakeLists.txt
++++ b/LeGO-LOAM/CMakeLists.txt
+@@ -24,6 +24,22 @@ find_package(GTSAM REQUIRED QUIET)
+ find_package(PCL REQUIRED QUIET)
+ find_package(OpenCV REQUIRED QUIET)
+ 
++# [slambench] Build-time constant overrides for include/utility.h. Empty (the default) = upstream values.
++# Usage: catkin_make -DSLAMBENCH_DEFS="SEGMENT_THETA_DEG_OVERRIDE=30 NEAREST_FEATURE_SEARCH_SQ_DIST_OVERRIDE=10"
++set(SLAMBENCH_DEFS "" CACHE STRING "Space-separated NAME=VALUE overrides for constants in include/utility.h")
++set(SLAMBENCH_ALLOWED MAPPING_PROCESS_INTERVAL_OVERRIDE SCAN_PERIOD_OVERRIDE SEGMENT_THETA_DEG_OVERRIDE
++    EDGE_THRESHOLD_OVERRIDE SURF_THRESHOLD_OVERRIDE NEAREST_FEATURE_SEARCH_SQ_DIST_OVERRIDE)
++separate_arguments(SLAMBENCH_DEFS_LIST UNIX_COMMAND "${SLAMBENCH_DEFS}")
++foreach(slambench_def ${SLAMBENCH_DEFS_LIST})
++  string(REGEX REPLACE "=.*$" "" slambench_name "${slambench_def}")
++  list(FIND SLAMBENCH_ALLOWED "${slambench_name}" slambench_idx)
++  if(slambench_idx EQUAL -1)
++    message(FATAL_ERROR "SLAMBENCH_DEFS: unknown override '${slambench_name}' (allowed: ${SLAMBENCH_ALLOWED})")
++  endif()
++  add_definitions(-D${slambench_def})
++  message(STATUS "slambench override: ${slambench_def}")
++endforeach()
++
+ catkin_package(
+   INCLUDE_DIRS include
+   CATKIN_DEPENDS cloud_msgs
+diff --git a/LeGO-LOAM/include/utility.h b/LeGO-LOAM/include/utility.h
+index 0c13827..4f53382 100755
+--- a/LeGO-LOAM/include/utility.h
++++ b/LeGO-LOAM/include/utility.h
+@@ -101,28 +101,58 @@ extern const int groundScanInd = 7;
+ // extern const float ang_bottom = 16.6+0.1;
+ // extern const int groundScanInd = 15;
+ 
++// [slambench] Build-time override hooks. Each #else branch keeps the upstream line verbatim, so a build
++// without -D<NAME>_OVERRIDE is token-identical to upstream. Overrides are passed through the CMake cache
++// variable SLAMBENCH_DEFS (see CMakeLists.txt), e.g. -DSLAMBENCH_DEFS="SEGMENT_THETA_DEG_OVERRIDE=30".
+ extern const bool loopClosureEnableFlag = false;
++#ifdef MAPPING_PROCESS_INTERVAL_OVERRIDE
++extern const double mappingProcessInterval = MAPPING_PROCESS_INTERVAL_OVERRIDE;
++#else
+ extern const double mappingProcessInterval = 0.3;
++#endif
+ 
++#ifdef SCAN_PERIOD_OVERRIDE
++extern const float scanPeriod = SCAN_PERIOD_OVERRIDE;
++#else
+ extern const float scanPeriod = 0.1;
++#endif
+ extern const int systemDelay = 0;
+ extern const int imuQueLength = 200;
+ 
+ extern const float sensorMinimumRange = 1.0;
+ extern const float sensorMountAngle = 0.0;
++#ifdef SEGMENT_THETA_DEG_OVERRIDE
++extern const float segmentTheta = (SEGMENT_THETA_DEG_OVERRIDE)/180.0*M_PI; // override given in degrees, as upstream
++#else
+ extern const float segmentTheta = 60.0/180.0*M_PI; // decrese this value may improve accuracy
++#endif
+ extern const int segmentValidPointNum = 5;
+ extern const int segmentValidLineNum = 3;
+ extern const float segmentAlphaX = ang_res_x / 180.0 * M_PI;
+ extern const float segmentAlphaY = ang_res_y / 180.0 * M_PI;
+ 
+ 
++// [slambench] edgeFeatureNum, surfFeatureNum and sectionsTotal are not referenced by any source file:
++// featureAssociation.cpp extractFeatures() hard-codes 2 sharp edges, 4 flat points and 6 sections per ring.
++// They are therefore not exposed as overrides.
+ extern const int edgeFeatureNum = 2;
+ extern const int surfFeatureNum = 4;
+ extern const int sectionsTotal = 6;
++#ifdef EDGE_THRESHOLD_OVERRIDE
++extern const float edgeThreshold = EDGE_THRESHOLD_OVERRIDE;
++#else
+ extern const float edgeThreshold = 0.1;
++#endif
++#ifdef SURF_THRESHOLD_OVERRIDE
++extern const float surfThreshold = SURF_THRESHOLD_OVERRIDE;
++#else
+ extern const float surfThreshold = 0.1;
++#endif
++#ifdef NEAREST_FEATURE_SEARCH_SQ_DIST_OVERRIDE
++extern const float nearestFeatureSearchSqDist = NEAREST_FEATURE_SEARCH_SQ_DIST_OVERRIDE;
++#else
+ extern const float nearestFeatureSearchSqDist = 25;
++#endif
+ 
+ 
+ // Mapping Params

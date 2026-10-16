@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.0.2)
+project(slambench_tools)
+find_package(catkin REQUIRED COMPONENTS roscpp topic_tools)
+catkin_package()
+include_directories(${catkin_INCLUDE_DIRS})
+add_executable(frame_logger src/frame_logger.cpp)
+target_link_libraries(frame_logger ${catkin_LIBRARIES})
+install(TARGETS frame_logger RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})

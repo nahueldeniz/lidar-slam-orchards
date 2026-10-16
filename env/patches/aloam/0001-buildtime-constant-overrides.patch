@@ -1,0 +1,119 @@
+# reason: build-time configuration only - lets DISTANCE_SQ_THRESHOLD, NEARBY_SCAN, both Huber loss scales (laserOdometry.cpp, laserMapping.cpp) and the scan period (scanRegistration.cpp + laserOdometry.cpp) be overridden per image via -DSLAMBENCH_DEFS; defaults equal upstream values (no algorithm change).
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a4eedd3..e1619e5 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -30,6 +30,23 @@ include_directories(
+   ${CERES_INCLUDE_DIRS}
+   ${OpenCV_INCLUDE_DIRS})
+ 
++# [slambench] Build-time constant overrides. CMAKE_CXX_FLAGS is overwritten above, so -DCMAKE_CXX_FLAGS=... would be
++# ignored; use this cache variable instead. Empty (the default) = upstream values.
++# Usage: catkin_make -DSLAMBENCH_DEFS="DISTANCE_SQ_THRESHOLD_OVERRIDE=25 NEARBY_SCAN_OVERRIDE=2.5"
++set(SLAMBENCH_DEFS "" CACHE STRING "Space-separated NAME=VALUE overrides for A-LOAM compile-time constants")
++set(SLAMBENCH_ALLOWED SCAN_PERIOD_OVERRIDE DISTANCE_SQ_THRESHOLD_OVERRIDE NEARBY_SCAN_OVERRIDE
++    ODOM_HUBER_DELTA_OVERRIDE MAPPING_HUBER_DELTA_OVERRIDE)
++separate_arguments(SLAMBENCH_DEFS_LIST UNIX_COMMAND "${SLAMBENCH_DEFS}")
++foreach(slambench_def ${SLAMBENCH_DEFS_LIST})
++  string(REGEX REPLACE "=.*$" "" slambench_name "${slambench_def}")
++  list(FIND SLAMBENCH_ALLOWED "${slambench_name}" slambench_idx)
++  if(slambench_idx EQUAL -1)
++    message(FATAL_ERROR "SLAMBENCH_DEFS: unknown override '${slambench_name}' (allowed: ${SLAMBENCH_ALLOWED})")
++  endif()
++  add_definitions(-D${slambench_def})
++  message(STATUS "slambench override: ${slambench_def}")
++endforeach()
++
+ catkin_package(
+   CATKIN_DEPENDS geometry_msgs nav_msgs roscpp rospy std_msgs
+   DEPENDS EIGEN3 PCL 
+diff --git a/src/laserMapping.cpp b/src/laserMapping.cpp
+index 92adf29..a762a40 100755
+--- a/src/laserMapping.cpp
++++ b/src/laserMapping.cpp
+@@ -74,6 +74,15 @@ double timeLaserOdometry = 0;
+ int laserCloudCenWidth = 10;
+ int laserCloudCenHeight = 10;
+ int laserCloudCenDepth = 5;
++// [slambench] Build-time override hooks: the default below equals the upstream literal, so a build
++// without -D<NAME>_OVERRIDE uses the upstream value. Set through the CMake cache variable SLAMBENCH_DEFS.
++// Scale of the mapping Huber loss; upstream used the literal 0.1 in the HuberLoss line in process().
++#ifdef MAPPING_HUBER_DELTA_OVERRIDE
++constexpr double MAPPING_HUBER_DELTA = MAPPING_HUBER_DELTA_OVERRIDE;
++#else
++constexpr double MAPPING_HUBER_DELTA = 0.1;
++#endif
++
+ const int laserCloudWidth = 21;
+ const int laserCloudHeight = 21;
+ const int laserCloudDepth = 11;
+@@ -562,7 +571,7 @@ void process()
+ 				for (int iterCount = 0; iterCount < 2; iterCount++)
+ 				{
+ 					//ceres::LossFunction *loss_function = NULL;
+-					ceres::LossFunction *loss_function = new ceres::HuberLoss(0.1);
++					ceres::LossFunction *loss_function = new ceres::HuberLoss(MAPPING_HUBER_DELTA); // [slambench] upstream literal: 0.1
+ 					ceres::LocalParameterization *q_parameterization =
+ 						new ceres::EigenQuaternionParameterization();
+ 					ceres::Problem::Options problem_options;
+diff --git a/src/laserOdometry.cpp b/src/laserOdometry.cpp
+index f981e31..e8583fa 100644
+--- a/src/laserOdometry.cpp
++++ b/src/laserOdometry.cpp
+@@ -61,9 +61,29 @@
+ 
+ int corner_correspondence = 0, plane_correspondence = 0;
+ 
++// [slambench] Build-time override hooks: each #else branch keeps the upstream line verbatim, so a build
++// without -D<NAME>_OVERRIDE is token-identical to upstream. Set through the CMake cache variable SLAMBENCH_DEFS.
++#ifdef SCAN_PERIOD_OVERRIDE
++constexpr double SCAN_PERIOD = SCAN_PERIOD_OVERRIDE;
++#else
+ constexpr double SCAN_PERIOD = 0.1;
++#endif
++#ifdef DISTANCE_SQ_THRESHOLD_OVERRIDE
++constexpr double DISTANCE_SQ_THRESHOLD = DISTANCE_SQ_THRESHOLD_OVERRIDE;
++#else
+ constexpr double DISTANCE_SQ_THRESHOLD = 25;
++#endif
++#ifdef NEARBY_SCAN_OVERRIDE
++constexpr double NEARBY_SCAN = NEARBY_SCAN_OVERRIDE;
++#else
+ constexpr double NEARBY_SCAN = 2.5;
++#endif
++// [slambench] scale of the odometry Huber loss; upstream used the literal 0.1 in the HuberLoss line in main()
++#ifdef ODOM_HUBER_DELTA_OVERRIDE
++constexpr double ODOM_HUBER_DELTA = ODOM_HUBER_DELTA_OVERRIDE;
++#else
++constexpr double ODOM_HUBER_DELTA = 0.1;
++#endif
+ 
+ int skipFrameNum = 5;
+ bool systemInited = false;
+@@ -281,7 +301,7 @@ int main(int argc, char **argv)
+                     plane_correspondence = 0;
+ 
+                     //ceres::LossFunction *loss_function = NULL;
+-                    ceres::LossFunction *loss_function = new ceres::HuberLoss(0.1);
++                    ceres::LossFunction *loss_function = new ceres::HuberLoss(ODOM_HUBER_DELTA); // [slambench] upstream literal: 0.1
+                     ceres::LocalParameterization *q_parameterization =
+                         new ceres::EigenQuaternionParameterization();
+                     ceres::Problem::Options problem_options;
+diff --git a/src/scanRegistration.cpp b/src/scanRegistration.cpp
+index b905b58..94fbba9 100755
+--- a/src/scanRegistration.cpp
++++ b/src/scanRegistration.cpp
+@@ -57,7 +57,13 @@ using std::atan2;
+ using std::cos;
+ using std::sin;
+ 
++// [slambench] Build-time override hooks: each #else branch keeps the upstream line verbatim, so a build
++// without -D<NAME>_OVERRIDE is token-identical to upstream. Set through the CMake cache variable SLAMBENCH_DEFS.
++#ifdef SCAN_PERIOD_OVERRIDE
++const double scanPeriod = SCAN_PERIOD_OVERRIDE;
++#else
+ const double scanPeriod = 0.1;
++#endif
+ 
+ const int systemDelay = 0; 
+ int systemInitCount = 0;

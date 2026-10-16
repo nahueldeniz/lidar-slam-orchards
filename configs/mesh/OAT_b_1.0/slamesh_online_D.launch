@@ -1,0 +1,33 @@
+<!--
+  SLAMesh configuration D (default) for the orchard re-run.
+  Derived from SLAMesh launch/slamesh_online.launch at commit 50b4356e8a24c4fe2e2dc1be37d682e703843314.
+  Every line that differs from upstream carries a comment starting with "CHANGED".
+  The upstream block of commented-out alternative remaps is omitted (comments only).
+
+  Usage inside the mesh image, with the configs folder mounted at /configs:
+    roslaunch /configs/mesh/D/slamesh_online_D.launch
+    roslaunch /configs/mesh/D/slamesh_online_D.launch cfg_dir:=/configs/mesh/T      (tuned configuration)
+  /use_sim_time must be set to true before this launch (run protocol, step 2).
+
+  Output evaluated: /lidar_odometry (nav_msgs/Odometry, frame_id "/map", child "/slamesher_odom",
+  header.stamp = stamp of the input scan). Side files go to result_path (KITTI-format *_pred.txt
+  uses the KITTI camera extrinsic of seq 00 and has no stamps: do not evaluate it).
+-->
+<launch>
+    <arg name="seq" default = "/00" />
+    <arg name="param" default = "" /> <!-- param is used for tuning "$(arg param)" -->
+    <arg name="data_path" default = " " />
+    <arg name="result_path" default = "$(find slamesh)/../../slamesh_result/kitti" />
+    <arg name="lidar_topic" default="/velodyne_points" />  <!-- CHANGED: new arg (input topic; CitrusFarm uses /velodyne_points) -->
+    <arg name="cfg_dir" default="/configs/mesh/D" />       <!-- CHANGED: new arg; YAML comes from the mounted configuration folder -->
+
+    <rosparam file="$(arg cfg_dir)/online.yaml" command="load" />  <!-- CHANGED: path; upstream $(find slamesh)/config/online.yaml -->
+    <node pkg="slamesh" type="slamesh" name="slamesher" output="screen">
+        <remap from="/velodyne_points" to="$(arg lidar_topic)" />  <!-- CHANGED: upstream remaps /velodyne_points to /os_cloud_node/points -->
+        <param name="seq" value="$(arg seq)"/>
+        <param name="file_loc_report"  value="$(arg result_path)"/>
+        <param name="file_loc_dataset" value="$(arg data_path)"/>
+    </node>
+
+    <!-- CHANGED: the RViz node (pkg rviz, config/rviz/slamesh_mesh_tool.rviz) is removed (brief Sections 0.6 and P7). -->
+</launch>

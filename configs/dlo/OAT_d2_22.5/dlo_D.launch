@@ -1,0 +1,65 @@
+<!--
+  DLO configuration D (default) for the orchard re-run.
+  Derived from direct_lidar_odometry launch/dlo.launch at commit 11528c02e89a1619ee3c42ba39ecaa992bd20bf4.
+  Every line that differs from upstream carries a comment starting with "CHANGED".
+
+  Usage inside the dlo image, with the configs folder mounted at /configs:
+    roslaunch /configs/dlo/D/dlo_D.launch
+    roslaunch /configs/dlo/D/dlo_D.launch cfg_dir:=/configs/dlo/T      (tuned configuration)
+  /use_sim_time must be set to true before this launch (run protocol, step 2).
+
+  Outputs (unchanged from upstream): /robot/dlo/odom_node/odom (nav_msgs/Odometry),
+  /robot/dlo/odom_node/pose (geometry_msgs/PoseStamped), /robot/dlo/odom_node/odom/keyframe,
+  /robot/dlo/odom_node/pointcloud/keyframe, /robot/dlo/map_node/map.
+
+  Copyright (c) 2022, University of California, Los Angeles
+  Authors: Kenny J. Chen, Brett T. Lopez
+  Contact: kennyjchen@ucla.edu, btlopez@ucla.edu
+-->
+
+<launch>
+
+  <arg name="robot_namespace" default="robot"/>
+  <!-- CHANGED: upstream arg "rviz" (default true) removed; upstream never used it and always started RViz. -->
+
+  <arg name="pointcloud_topic" default="/velodyne_points"/>  <!-- CHANGED: upstream default "lidar", which resolves to /robot/lidar -->
+  <arg name="imu_topic" default="/robot/dlo/imu_unused"/>    <!-- CHANGED: upstream default "imu" (/robot/imu). dlo/imu is false, so imuCB returns at once; a topic nobody publishes guarantees that no IMU data reaches DLO -->
+  <arg name="cfg_dir" default="/configs/dlo/D"/>             <!-- CHANGED: new arg; YAML files come from the mounted configuration folder instead of $(find direct_lidar_odometry)/cfg -->
+  <arg name="map_node" default="true"/>                      <!-- CHANGED: new arg; true keeps the upstream mapping node (no effect on odometry; see open questions) -->
+
+  <!-- DLO Odometry Node -->
+  <node ns="$(arg robot_namespace)" name="dlo_odom" pkg="direct_lidar_odometry" type="dlo_odom_node" output="screen" clear_params="true">
+
+    <!-- Load parameters -->
+    <rosparam file="$(arg cfg_dir)/dlo.yaml" command="load"/>     <!-- CHANGED: path; upstream $(find direct_lidar_odometry)/cfg/dlo.yaml -->
+    <rosparam file="$(arg cfg_dir)/params.yaml" command="load"/>  <!-- CHANGED: path; upstream $(find direct_lidar_odometry)/cfg/params.yaml -->
+
+    <!-- Subscriptions -->
+    <remap from="~pointcloud" to="$(arg pointcloud_topic)"/>
+    <remap from="~imu" to="$(arg imu_topic)"/>
+
+    <!-- Publications -->
+    <remap from="~odom" to="dlo/odom_node/odom"/>
+    <remap from="~pose" to="dlo/odom_node/pose"/>
+    <remap from="~kfs" to="dlo/odom_node/odom/keyframe"/>
+    <remap from="~keyframe" to="dlo/odom_node/pointcloud/keyframe"/>
+
+  </node>
+
+  <!-- DLO Mapping Node -->
+  <node if="$(arg map_node)" ns="$(arg robot_namespace)" name="dlo_map" pkg="direct_lidar_odometry" type="dlo_map_node" output="screen" clear_params="true">  <!-- CHANGED: 'if' attribute added -->
+
+    <!-- Load parameters -->
+    <rosparam file="$(arg cfg_dir)/dlo.yaml" command="load"/>  <!-- CHANGED: path; upstream $(find direct_lidar_odometry)/cfg/dlo.yaml -->
+
+    <!-- Subscriptions -->
+    <remap from="~keyframes" to="dlo/odom_node/pointcloud/keyframe"/>
+
+    <!-- Publications -->
+    <remap from="~map" to="dlo/map_node/map"/>
+
+  </node>
+
+  <!-- CHANGED: the RViz node (pkg rviz, args -d $(find direct_lidar_odometry)/launch/dlo.rviz) is removed (brief Sections 0.6 and P7). -->
+
+</launch>

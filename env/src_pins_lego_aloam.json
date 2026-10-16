@@ -1,0 +1,82 @@
+{
+  "_comment": "Pinned upstream sources for LeGO-LOAM (lego) and A-LOAM (aloam). Written 2026-10-12 by the lego/aloam environment agent. SHAs verified with git ls-remote and git log in env/src/<method>/.",
+  "lego": {
+    "repository": "https://github.com/RobustFieldAutonomyLab/LeGO-LOAM",
+    "local_clone": "env/src/lego/LeGO-LOAM",
+    "branch": "master",
+    "branch_is_remote_default": true,
+    "head_sha": "896a7a95a8bc510b76819d4cc48707e344bad621",
+    "head_commit_date": "2020-07-02T08:47:43-04:00",
+    "head_subject": "Update README.md",
+    "catkin_packages": [
+      "lego_loam (LeGO-LOAM/)",
+      "cloud_msgs (cloud_msgs/)"
+    ],
+    "dependency_required_by_readme": {
+      "name": "GTSAM",
+      "version_stated": "4.0.0-alpha2",
+      "readme_text": "gtsam (Georgia Tech Smoothing and Mapping library, 4.0.0-alpha2); wget https://github.com/borglab/gtsam/archive/4.0.0-alpha2.zip; cmake ..; sudo make install",
+      "tag": "4.0.0-alpha2",
+      "tag_object_sha": "adb329504ef7b2e7965d4baeb1c33e0793f0b9ab",
+      "tag_commit_sha": "c82fe1fde2fc988b6bde5e4798b66129bbb5da19",
+      "tag_commit_date": "2017-08-05T20:20:16+00:00",
+      "bundled_eigen_version": "3.2.10 (gtsam/3rdparty/Eigen; used unless GTSAM_USE_SYSTEM_EIGEN=ON)",
+      "notes": "4.0.0-alpha2 has no GTSAM_BUILD_WITH_MARCH_NATIVE option and adds no -march flags (checked in its CMakeLists.txt and cmake/)."
+    },
+    "readme_ros_distros_tested": "indigo, kinetic, melodic",
+    "readme_build_command": "catkin_make -j1 (first build; needed to generate cloud_msgs)",
+    "patches": [
+      "env/patches/lego/0001-buildtime-constant-overrides.patch",
+      "env/patches/lego/0002-log-effective-constants.patch"
+    ],
+    "local_clone_state": "checked out on branch master at head_sha; patches 0001+0002 applied in the working tree, not committed (git diff HEAD reproduces them)"
+  },
+  "aloam": {
+    "repository": "https://github.com/HKUST-Aerial-Robotics/A-LOAM",
+    "local_clone": "env/src/aloam/A-LOAM",
+    "branch": "devel",
+    "branch_exists": true,
+    "branch_is_remote_default": true,
+    "other_remote_branches": [],
+    "head_sha": "e51f88c12b483ce42dfa219783712c7234dc8c08",
+    "head_commit_date": "2019-03-28T15:48:21+08:00",
+    "head_subject": "update readme",
+    "catkin_packages": [
+      "aloam_velodyne"
+    ],
+    "dependency_required_by_readme": {
+      "name": "Ceres Solver",
+      "version_stated": null,
+      "readme_text": "1.2. Ceres Solver: Follow Ceres Installation (http://ceres-solver.org/installation.html).",
+      "version_pinned_elsewhere_in_repo": {
+        "file": "docker/Dockerfile",
+        "value": "ENV CERES_VERSION=\"1.12.0\" (with FROM ros:kinetic-perception and PCL 1.8.0 built from source)"
+      },
+      "candidate_tags": {
+        "1.12.0": {
+          "tag_commit_sha": "029799d757b4ed2be5af64899178928f18cb6e28",
+          "commit_date": "2016-12-05T07:42:48-08:00",
+          "why": "pinned in the repository's own docker/Dockerfile"
+        },
+        "1.13.0": {
+          "tag_commit_sha": "19333b0f55c8462381038e70d42af43b52941128",
+          "commit_date": "2017-08-03T00:09:36-07:00",
+          "why": "version shipped by Ubuntu 18.04 (libceres-dev 1.13.0)"
+        },
+        "1.14.0": {
+          "tag_commit_sha": "facb199f3eda902360f9e1d5271372b7e54febe1",
+          "why": "latest Ceres release when the pinned A-LOAM commit was made"
+        }
+      },
+      "chosen_for_docker": "1.12.0 (Docker build arg CERES_TAG, commit CERES_COMMIT; see open questions in configs/aloam/source_audit.md)",
+      "evidence": "Probe on 2026-10-12 (host GCC 11.4, -std=c++11, Eigen 3.3.4 headers): Ceres 1.12.0 library target compiled with no errors, and A-LOAM's lidarFactor.hpp autodiff factors with EigenQuaternionParameterization and HuberLoss compiled, linked and evaluated. Not a Melodic build; GCC 7.5 not tested.",
+      "compatible_range": ">= 1.12.0 (EigenQuaternionParameterization added in 1.12.0) and < 2.2 (LocalParameterization removed)"
+    },
+    "readme_ros_distros": "Ubuntu 16.04 or 18.04; ROS Kinetic or Melodic",
+    "patches": [
+      "env/patches/aloam/0001-buildtime-constant-overrides.patch",
+      "env/patches/aloam/0002-log-effective-constants.patch"
+    ],
+    "local_clone_state": "checked out on branch devel at head_sha; patches 0001+0002 applied in the working tree, not committed (git diff HEAD reproduces them)"
+  }
+}

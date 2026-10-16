@@ -1,0 +1,86 @@
+{
+  "seq": "cf_2",
+  "gt_bag": "citrusfarm/ground_truth/02_13B_Jackal/gt.bag",
+  "topic": "/gps/fix/odometry",
+  "msgtype": "nav_msgs/msg/Odometry",
+  "frame_ids": [
+    "rtk_path_frame"
+  ],
+  "child_frame_ids": [],
+  "count": 4447,
+  "t_start": 1689717081.917136,
+  "t_end": 1689717526.474206,
+  "span_s": 444.55707001686096,
+  "median_rate_hz": 9.997554423609108,
+  "gap_threshold_s": 0.2,
+  "gaps": [],
+  "n_duplicate_stamps": 0,
+  "orientation_populated": false,
+  "path_length_3d_all_samples_m": 524.6017922796983,
+  "path_length_3d_min_step_m": 522.1368962321945,
+  "path_length_published_m": 524.6,
+  "position_first": [
+    0.0,
+    -0.0,
+    0.0
+  ],
+  "pose_covariance_populated_fraction": 0.0,
+  "rtk": {
+    "status": "ok",
+    "topic": "/piksi/navsatfix_best_fix",
+    "count": 4447,
+    "median_rate_hz": 9.997554423609108,
+    "fix_status_counts": {
+      "GBAS fix": 4447
+    },
+    "fix_status_percent": {
+      "GBAS fix": 100.0
+    },
+    "covariance_type_values": [
+      1
+    ],
+    "sigma_enu_m": {
+      "E": {
+        "median": 0.06999999999999999,
+        "p95": 0.06999999999999999,
+        "max": 5.0,
+        "n_unique": 2
+      },
+      "N": {
+        "median": 0.06999999999999999,
+        "p95": 0.06999999999999999,
+        "max": 5.0,
+        "n_unique": 2
+      },
+      "U": {
+        "median": 0.1,
+        "p95": 0.1,
+        "max": 8.0,
+        "n_unique": 2
+      }
+    },
+    "receiver_state": {
+      "topic": "/piksi/debug/receiver_state",
+      "num_sat": {
+        "min": 41,
+        "median": 45.0,
+        "max": 47
+      },
+      "fix_mode_counts": {
+        "FIXED_RTK": 5726,
+        "FLOAT_RTK": 59
+      }
+    },
+    "enu_consistency": {
+      "n": 4447,
+      "rms_3d_m": 0.06130779667412621,
+      "rms_horizontal_m": 0.061300936680057,
+      "rms_vertical_m": 0.0009171124160342294,
+      "gt_to_enu_rotation_zyx_deg": [
+        89.9976340271769,
+        -0.000291702354224425,
+        -0.0003776868080195474
+      ]
+    }
+  }
+}

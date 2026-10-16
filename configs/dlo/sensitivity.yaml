@@ -1,0 +1,17 @@
+# One-at-a-time sensitivity design, Plan A (decided by Nahuel on 12 October 2026). Levels from the
+# reviewed draft tuning_levels.yaml; selection rule in configs/SENSITIVITY_DESIGN.md.
+method: dlo
+status: LOCKED
+sequence: cf_5
+parameters:
+  - {id: b, name: scan voxel size, unit: m, module: FE, default: 0.25, levels: [0.15, 0.5],
+     changes: [{yaml_file: params.yaml, key: dlo/odomNode/preprocessing/voxelFilter/scan/res}]}
+  - {id: c, name: sub-map voxel size, unit: m, module: FE, default: 0.5, levels: [0.3, 1.0],
+     changes: [{yaml_file: params.yaml, key: dlo/odomNode/preprocessing/voxelFilter/submap/res}]}
+  - {id: d2, name: keyframe rotation threshold, unit: deg, module: FE, default: 45.0, levels: [22.5, 90.0],
+     changes: [{yaml_file: params.yaml, key: dlo/odomNode/keyframe/threshR}]}
+  # Row e is varied jointly (k-nearest, convex hull and concave hull keyframes), as in the submitted P2.
+  - {id: e, name: "sub-map keyframes (k-nearest, convex, concave)", unit: keyframes, module: FE, default: 10, levels: [5, 20],
+     changes: [{yaml_file: params.yaml, key: dlo/odomNode/submap/keyframe/knn},
+               {yaml_file: params.yaml, key: dlo/odomNode/submap/keyframe/kcv},
+               {yaml_file: params.yaml, key: dlo/odomNode/submap/keyframe/kcc}]}

@@ -1,0 +1,42 @@
+<launch>
+    <!-- [slambench] Configuration D of A-LOAM. Copied from launch/aloam_velodyne_VLP_16.launch at
+         e51f88c12b483ce42dfa219783712c7234dc8c08. Every line that differs from upstream carries a [slambench] comment.
+         All five ROS parameters were already explicit upstream and keep their VLP-16 launch values. They are global
+         parameters (the nodes read them through a public NodeHandle). Compile-time constants for D are listed in
+         configs/aloam/D/constants.env; every node prints its effective values at start-up ('[slambench-constants]'). -->
+
+    <!-- [slambench] added: simulated time. Same value as the run protocol sets on the fresh roscore before launch
+         (brief Section 6, step 2); upstream leaves it to the user. With sim time, the ros::Rate(100) loop of
+         alaserOdometry is paced by the /clock topic published by rosbag play (clock option). -->
+    <param name="/use_sim_time" value="true" /> <!-- [slambench] added -->
+
+    <!-- [slambench] added: input topic. Upstream hard-codes "/velodyne_points" in scanRegistration.cpp:478;
+         the default below is a no-op remap. Override only if a dataset uses another LiDAR topic. -->
+    <arg name="lidar_topic" default="/velodyne_points" /> <!-- [slambench] added -->
+
+    <param name="scan_line" type="int" value="16" />
+
+    <!-- if 1, do mapping 10 Hz, if 2, do mapping 5 Hz. Suggest to use 1, it will adjust frequence automaticlly -->
+    <param name="mapping_skip_frame" type="int" value="1" />
+
+    <!-- remove too closed points -->
+    <param name="minimum_range" type="double" value="0.3"/>
+
+
+    <param name="mapping_line_resolution" type="double" value="0.2"/>
+    <param name="mapping_plane_resolution" type="double" value="0.4"/>
+
+    <node pkg="aloam_velodyne" type="ascanRegistration" name="ascanRegistration" output="screen"> <!-- [slambench] changed: tag opened to hold a remap (upstream: self-closing) -->
+        <remap from="/velodyne_points" to="$(arg lidar_topic)" /> <!-- [slambench] added: input topic remap (no-op by default) -->
+    </node> <!-- [slambench] added: closes the node tag opened above -->
+
+    <node pkg="aloam_velodyne" type="alaserOdometry" name="alaserOdometry" output="screen" />
+
+    <node pkg="aloam_velodyne" type="alaserMapping" name="alaserMapping" output="screen" />
+
+    <arg name="rviz" default="false" /> <!-- [slambench] changed: default false (upstream true); kept so that 'rviz:=false' is still accepted -->
+    <!-- [slambench] removed: the RViz group (upstream lines 22-24),
+         <group if="$(arg rviz)"> <node launch-prefix="nice" pkg="rviz" type="rviz" name="rviz" args="-d $(find aloam_velodyne)/rviz_cfg/aloam_velodyne.rviz" /> </group>
+         so RViz cannot start even with rviz:=true (no visualisation, brief Section 0.6 and P7). -->
+
+</launch>

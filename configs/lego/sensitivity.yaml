@@ -1,0 +1,14 @@
+# One-at-a-time sensitivity design, Plan A (decided by Nahuel on 12 October 2026). Levels from the
+# reviewed draft tuning_levels.yaml; selection rule in configs/SENSITIVITY_DESIGN.md.
+method: lego
+status: LOCKED
+sequence: cf_5
+parameters:
+  - {id: b, name: segment theta, unit: deg, module: pre-processing (FE+BE), default: 60, levels: [10, 30],
+     changes: [{constant: SEGMENT_THETA_DEG}]}
+  - {id: g, name: nearest-feature search distance (squared), unit: m^2, module: FE, default: 25, levels: [10, 50],
+     changes: [{constant: NEAREST_FEATURE_SEARCH_SQ_DIST}]}
+  - {id: d, name: edge threshold, unit: curvature, module: FE, default: 0.1, levels: [0.05, 0.2],
+     changes: [{constant: EDGE_THRESHOLD}]}
+  - {id: a, name: mapping process interval, unit: s, module: BE, default: 0.3, levels: [0.15, 0.6],
+     changes: [{constant: MAPPING_PROCESS_INTERVAL}]}

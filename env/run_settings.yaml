@@ -1,0 +1,43 @@
+# Run-protocol settings (brief Section 6). Items marked PENDING wait for an
+# answer in OPEN_QUESTIONS.md and must be filled before the first measured run.
+
+idle:                       # Section 6 step 1: total CPU < 5 % for 30 s
+  window_s: 30
+  max_mean_cpu_pct: 5.0
+  max_wait_s: 900
+
+# Q3 (12 October 2026, no objection to the proposed default): every measured run
+# must match the laptop's settings at the start of the campaign, on mains power.
+expected_power_settings:
+  scaling_driver: intel_pstate
+  scaling_governor: powersave
+  energy_performance_preference: balance_performance
+  intel_pstate_no_turbo: "0"
+  power_profiles_daemon: performance
+  acpi_platform_profile: performance
+  asus_throttle_thermal_policy: "1"
+require_ac_online: true
+
+# Q4 (12 October 2026, no objection to the proposed default): method on the
+# performance cores, infrastructure (roscore, rosbag play/record, frame logger)
+# on the efficiency cores of the hybrid i7-13620H.
+cpuset:
+  method: "0-11"
+  infra: "12-15"
+
+method_startup_wait_s: 10   # Section 6 step 4 (at least 10 s)
+quiet_s: 10                 # Section 6 step 7: no output for 10 s ...
+max_wait_after_playback_s: 60   # ... at most 60 s
+cooldown_s: 60              # Section 6 step 8
+max_playback_lag_s: 0.5         # larger lag behind the bag timeline = infrastructure fault (one retry)
+min_data_link_mbps: 5000          # bags drive must be on a USB 3 link (degraded link on 12-13 Oct caused stalls)
+# Optional internal-disk copies of the bags (scripts/stage_local.py): when a sequence has
+# a verified copy there, scripts/run_one.py plays it instead of the data root.
+# The environment variable SLAMBENCH_LOCAL overrides this entry; null (default) = not used.
+# Public-release note: the measured runs used a folder on the laptop's internal disk
+# (recorded in each run's manifest.json, data_source).
+local_data_root: null
+
+# Public-release note: expected_power_settings, require_ac_online and cpuset above describe
+# the benchmark laptop (env/machine.json). On another machine, edit them to match it, or
+# use --phase dry with --allow-settings-mismatch --no-cpuset for an unmeasured run.

@@ -1,0 +1,74 @@
+# reason: logging only - each node prints the effective compile-time constants (ROS_INFO, tag [slambench-constants]) at start-up so every run's console log proves which build it used; applies after 0001.
+diff --git a/LeGO-LOAM/include/utility.h b/LeGO-LOAM/include/utility.h
+index 4f53382..6a27224 100755
+--- a/LeGO-LOAM/include/utility.h
++++ b/LeGO-LOAM/include/utility.h
+@@ -165,6 +165,20 @@ extern const float historyKeyframeFitnessScore = 0.3; // the smaller the better
+ 
+ extern const float globalMapVisualizationSearchRadius = 500.0; // key frames with in n meters will be visualized
+ 
++// [slambench] Logging only: print the compile-time constants this binary was built with (one call per node at start-up).
++inline void slambenchLogConstants(const char* node)
++{
++    ROS_INFO("[slambench-constants] node=%s pointCloudTopic=%s imuTopic=%s useCloudRing=%d N_SCAN=%d Horizon_SCAN=%d ang_res_x=%.9g ang_res_y=%.9g ang_bottom=%.9g groundScanInd=%d",
++             node, pointCloudTopic.c_str(), imuTopic.c_str(), (int)useCloudRing, N_SCAN, Horizon_SCAN, ang_res_x, ang_res_y, ang_bottom, groundScanInd);
++    ROS_INFO("[slambench-constants] node=%s loopClosureEnableFlag=%d mappingProcessInterval=%.9g scanPeriod=%.9g systemDelay=%d imuQueLength=%d sensorMinimumRange=%.9g sensorMountAngle=%.9g segmentTheta=%.9g (deg %.9g) segmentValidPointNum=%d segmentValidLineNum=%d",
++             node, (int)loopClosureEnableFlag, mappingProcessInterval, scanPeriod, systemDelay, imuQueLength, sensorMinimumRange, sensorMountAngle, segmentTheta, segmentTheta*180.0/M_PI, segmentValidPointNum, segmentValidLineNum);
++    ROS_INFO("[slambench-constants] node=%s edgeFeatureNum=%d(unused) surfFeatureNum=%d(unused) sectionsTotal=%d(unused) edgeThreshold=%.9g surfThreshold=%.9g nearestFeatureSearchSqDist=%.9g surroundingKeyframeSearchRadius=%.9g surroundingKeyframeSearchNum=%d historyKeyframeSearchRadius=%.9g historyKeyframeSearchNum=%d historyKeyframeFitnessScore=%.9g",
++             node, edgeFeatureNum, surfFeatureNum, sectionsTotal, edgeThreshold, surfThreshold, nearestFeatureSearchSqDist, surroundingKeyframeSearchRadius, surroundingKeyframeSearchNum, historyKeyframeSearchRadius, historyKeyframeSearchNum, historyKeyframeFitnessScore);
++    if (scanPeriod != 0.1f)
++        ROS_WARN("[slambench-constants] node=%s scanPeriod=%.9g differs from 0.1, but featureAssociation.cpp TransformToStart/TransformToEnd decode the relative point time with the literal 10 (= 1/0.1)",
++                 node, scanPeriod);
++}
++
+ 
+ struct smoothness_t{ 
+     float value;
+diff --git a/LeGO-LOAM/src/featureAssociation.cpp b/LeGO-LOAM/src/featureAssociation.cpp
+index a13447f..51e5bbd 100755
+--- a/LeGO-LOAM/src/featureAssociation.cpp
++++ b/LeGO-LOAM/src/featureAssociation.cpp
+@@ -1866,6 +1866,7 @@ public:
+ int main(int argc, char** argv)
+ {
+     ros::init(argc, argv, "lego_loam");
++    slambenchLogConstants("featureAssociation"); // [slambench] logging only
+ 
+     ROS_INFO("\033[1;32m---->\033[0m Feature Association Started.");
+ 
+diff --git a/LeGO-LOAM/src/imageProjection.cpp b/LeGO-LOAM/src/imageProjection.cpp
+index 440de9e..a5f0181 100755
+--- a/LeGO-LOAM/src/imageProjection.cpp
++++ b/LeGO-LOAM/src/imageProjection.cpp
+@@ -513,6 +513,7 @@ public:
+ int main(int argc, char** argv){
+ 
+     ros::init(argc, argv, "lego_loam");
++    slambenchLogConstants("imageProjection"); // [slambench] logging only
+     
+     ImageProjection IP;
+ 
+diff --git a/LeGO-LOAM/src/mapOptmization.cpp b/LeGO-LOAM/src/mapOptmization.cpp
+index 5608832..beaf604 100755
+--- a/LeGO-LOAM/src/mapOptmization.cpp
++++ b/LeGO-LOAM/src/mapOptmization.cpp
+@@ -1526,6 +1526,7 @@ public:
+ int main(int argc, char** argv)
+ {
+     ros::init(argc, argv, "lego_loam");
++    slambenchLogConstants("mapOptmization"); // [slambench] logging only
+ 
+     ROS_INFO("\033[1;32m---->\033[0m Map Optimization Started.");
+ 
+diff --git a/LeGO-LOAM/src/transformFusion.cpp b/LeGO-LOAM/src/transformFusion.cpp
+index 73fb3ab..0f4824c 100755
+--- a/LeGO-LOAM/src/transformFusion.cpp
++++ b/LeGO-LOAM/src/transformFusion.cpp
+@@ -243,6 +243,7 @@ public:
+ int main(int argc, char** argv)
+ {
+     ros::init(argc, argv, "lego_loam");
++    slambenchLogConstants("transformFusion"); // [slambench] logging only
+     
+     TransformFusion TFusion;
+ 

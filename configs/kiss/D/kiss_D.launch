@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!--
+  KISS-ICP - configuration D (default) for the orchard benchmark re-run.
+  Derived from ros/launch/odometry.launch at PRBonn/kiss-icp tag v0.3.0
+  (commit 460c6f2cc3616c122c42006898036df9c20b636f). KISS-ICP is odometry only (FE).
+
+  Rules followed:
+    * Every line that differs from upstream carries a CHANGED / ADDED / REMOVED comment; all other lines are verbatim.
+    * No RViz and no debug clouds (visualize false); no motion compensation (deskew false), as fixed in the brief.
+    * All KISS-ICP parameters are explicit. The tuned ones (configs/kiss/tuning_levels.yaml) are args whose
+      defaults are the D (= upstream) values, so T and one-at-a-time runs only pass arguments.
+    * LiDAR only by construction: the node subscribes to one PointCloud2 topic and nothing else.
+  Example:
+    roslaunch kiss_D.launch
+-->
+<launch>
+  <!-- ROS paramaters -->
+  <!-- REMOVED: arg bagfile and the rosbag play group; playback is done by the infrastructure container (Section 6) -->
+  <arg name="visualize" default="false"/>   <!-- CHANGED: upstream default true (starts RViz, problem P7, and publishes debug clouds) -->
+  <arg name="odom_frame" default="odom"/>
+  <arg name="base_frame" default=""/>
+  <arg name="topic" default="/velodyne_points"/>   <!-- CHANGED: upstream default "" -->
+  <arg name="publish_odom_tf" default="false"/>
+
+  <!-- KISS-ICP paramaters -->
+  <arg name="deskew" default="false"/>
+  <arg name="max_range" default="100.0" />
+  <arg name="min_range" default="5.0" />
+  <arg name="voxel_size" default="1.0" />   <!-- CHANGED: upstream "" (a string param, so OdometryServer.cpp:62 falls back to max_range/100 = 1.0 m); explicit value, numerically identical -->
+  <arg name="max_points_per_voxel" default="20" />   <!-- ADDED: upstream has the literal 20 in the param line -->
+  <arg name="initial_threshold" default="2.0" />   <!-- ADDED: upstream has the literal 2.0 in the param line -->
+  <arg name="min_motion_th" default="0.1" />   <!-- ADDED: upstream has the literal 0.1 in the param line -->
+
+  <!-- Odometry node -->
+  <node pkg="kiss_icp" type="odometry_node" name="odometry_node" output="screen">
+    <!-- ROS params -->
+    <remap from="pointcloud_topic" to="$(arg topic)"/>
+    <param name="odom_frame" value="$(arg odom_frame)"/>
+    <param name="base_frame" value="$(arg base_frame)"/>
+    <param name="publish_odom_tf" value="$(arg publish_odom_tf)"/>
+    <param name="visualize" value="$(arg visualize)"/>
+    <!-- KISS-ICP params -->
+    <param name="max_range" value="$(arg max_range)"/>
+    <param name="min_range" value="$(arg min_range)"/>
+    <param name="deskew" value="$(arg deskew)"/>
+    <param name="voxel_size" value="$(arg voxel_size)"/>
+    <param name="max_points_per_voxel" value="$(arg max_points_per_voxel)"/>   <!-- CHANGED: value from arg (D = 20, upstream literal) -->
+    <param name="initial_threshold" value="$(arg initial_threshold)"/>   <!-- CHANGED: value from arg (D = 2.0, upstream literal) -->
+    <param name="min_motion_th" value="$(arg min_motion_th)" />   <!-- CHANGED: value from arg (D = 0.1, upstream literal) -->
+  </node>
+
+  <!-- REMOVED: the RViz group (upstream starts rviz when visualize is true); RViz must never run during measured runs -->
+
+</launch>

@@ -1,0 +1,133 @@
+# Method registry used by scripts/run_one.py, scripts/evaluate_runs.py and
+# scripts/make_configs.py. Source verification for every entry:
+# configs/<method>/source_verification.md or configs/<method>/D/README.md.
+#
+# image          Docker image; "{config}" for methods whose parameters are
+#                compile-time constants (one image per configuration).
+# launch         launch file inside configs/<method>/<config>/ (mounted at
+#                /configs, read-only).
+# fixed_args     launch arguments passed on every run ("{method}", "{config}"
+#                are substituted).
+# dataset_args   launch argument -> key of `sensor` in datasets/sequences.yaml.
+# outputs        topics recorded (Odometry / Pose / Transform only; never
+#                nav_msgs/Path). fe = front-end, full = back-end or fused.
+# eval_outputs   how each evaluated output becomes the LiDAR pose
+#                (eval/slameval/outputs.py; frames in eval/frames.md).
+# post_playback_calls  shell commands run in the method container after the
+#                output has gone quiet (Section 6, step 7).
+
+methods:
+  hdl:
+    image: slambench/hdl:melodic
+    launch: hdl_D.launch
+    dataset_args: {sensor_height: sensor_height, tilt_deg: tilt_deg, lidar_frame_id: lidar_frame_id}
+    outputs:
+      fe: [/odom]
+      full: [/hdl_graph_slam/odom2pub]
+    post_playback_calls:
+      - "rosservice call /hdl_graph_slam/dump \"destination: '/out/hdl_dump'\""
+      # Keyframe clouds are not evaluated and would take several GB per run;
+      # the 'data' files with the optimised poses are kept.
+      - "find /out/hdl_dump -name '*.pcd' -delete"
+    eval_outputs:
+      fe:            # T_odom<-base_link; base_link = LiDAR frame (identity lidar2base_publisher)
+        kind: topic
+        topic: /odom
+        group: fe
+      full:          # online: latest map<-odom correction received at or before each /odom message
+        kind: compose_latest
+        correction_topic: /hdl_graph_slam/odom2pub
+        odom_topic: /odom
+        associate_by: receipt
+        group: full
+      full_final:    # optimised keyframe poses after the run (dump), T_map<-LiDAR
+        kind: hdl_dump
+        dump_dir: hdl_dump
+        group: full
+
+  lego:
+    image: "slambench/lego:{config}"
+    launch: run.launch
+    outputs:
+      fe: [/laser_odom_to_init]
+      full: [/aft_mapped_to_init, /integrated_to_init]
+    # All LeGO-LOAM outputs are in its rotated camera_init/camera frames
+    # (z forward, x left, y up). LiDAR pose: R_L = P^T R P, p_L = P^T t,
+    # with P^T = [[0,0,1],[1,0,0],[0,1,0]] (configs/lego/source_audit.md).
+    eval_outputs:
+      fe:
+        kind: topic
+        topic: /laser_odom_to_init
+        group: fe
+        left: {R: [[0, 0, 1], [1, 0, 0], [0, 1, 0]]}
+        right: {R: [[0, 1, 0], [0, 0, 1], [1, 0, 0]]}
+      full:          # transformFusion: odometry corrected by mapping, high rate
+        kind: topic
+        topic: /integrated_to_init
+        group: full
+        left: {R: [[0, 0, 1], [1, 0, 0], [0, 1, 0]]}
+        right: {R: [[0, 1, 0], [0, 0, 1], [1, 0, 0]]}
+      full_mapping:  # mapOptmization output, mapping rate
+        kind: topic
+        topic: /aft_mapped_to_init
+        group: full
+        left: {R: [[0, 0, 1], [1, 0, 0], [0, 1, 0]]}
+        right: {R: [[0, 1, 0], [0, 0, 1], [1, 0, 0]]}
+
+  aloam:
+    image: "slambench/aloam:{config}"
+    launch: aloam_velodyne_VLP_16.launch
+    outputs:
+      fe: [/laser_odom_to_init]
+      full: [/aft_mapped_to_init, /aft_mapped_to_init_high_frec]
+    # camera_init is the LiDAR frame at the first scan: no conversion needed.
+    eval_outputs:
+      fe:
+        kind: topic
+        topic: /laser_odom_to_init
+        group: fe
+      full:          # odometry corrected by mapping, high rate
+        kind: topic
+        topic: /aft_mapped_to_init_high_frec
+        group: full
+      full_mapping:  # laserMapping output (drops frames when it lags)
+        kind: topic
+        topic: /aft_mapped_to_init
+        group: full
+
+  dlo:
+    image: slambench/dlo:melodic
+    launch: dlo_D.launch
+    fixed_args: {cfg_dir: "/configs/{method}/{config}"}
+    outputs:
+      full: [/robot/dlo/odom_node/odom]
+    eval_outputs:
+      full:          # LiDAR pose relative to the first scan; stamped with the scan stamp
+        kind: topic
+        topic: /robot/dlo/odom_node/odom
+        group: full
+
+  kiss:
+    image: slambench/kiss:melodic
+    launch: kiss_D.launch
+    outputs:
+      full: [/kiss/odometry]
+    eval_outputs:
+      full:          # T_odom<-LiDAR, odom = first scan; exact scan stamps
+        kind: topic
+        topic: /kiss/odometry
+        group: full
+
+  mesh:
+    image: slambench/mesh:melodic
+    launch: slamesh_online_D.launch
+    # result_path: the mesh file written at shutdown goes to the container's
+    # /tmp (discarded); it does not affect the trajectory.
+    fixed_args: {cfg_dir: "/configs/{method}/{config}", result_path: /tmp/slamesh_result}
+    outputs:
+      full: [/lidar_odometry]
+    eval_outputs:
+      full:          # LiDAR pose relative to the first scan; stamped with the scan stamp
+        kind: topic
+        topic: /lidar_odometry
+        group: full

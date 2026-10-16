@@ -1,0 +1,90 @@
+{
+  "seq": "cf_6",
+  "gt_bag": "citrusfarm/ground_truth/06_14B_Jackal/gt.bag",
+  "topic": "/gps/fix/odometry",
+  "msgtype": "nav_msgs/msg/Odometry",
+  "frame_ids": [
+    "rtk_path_frame"
+  ],
+  "child_frame_ids": [],
+  "count": 3024,
+  "t_start": 1689715775.938954,
+  "t_end": 1689716078.201504,
+  "span_s": 302.26254987716675,
+  "median_rate_hz": 9.989601469036623,
+  "gap_threshold_s": 0.2,
+  "gaps": [
+    [
+      278.0680818557739,
+      0.2062361240386963
+    ]
+  ],
+  "n_duplicate_stamps": 0,
+  "orientation_populated": false,
+  "path_length_3d_all_samples_m": 356.5820113159591,
+  "path_length_3d_min_step_m": 355.62997929144825,
+  "path_length_published_m": 356.6,
+  "position_first": [
+    0.0,
+    -0.0,
+    0.0
+  ],
+  "pose_covariance_populated_fraction": 0.0,
+  "rtk": {
+    "status": "ok",
+    "topic": "/piksi/navsatfix_best_fix",
+    "count": 3024,
+    "median_rate_hz": 9.989601469036623,
+    "fix_status_counts": {
+      "GBAS fix": 3024
+    },
+    "fix_status_percent": {
+      "GBAS fix": 100.0
+    },
+    "covariance_type_values": [
+      1
+    ],
+    "sigma_enu_m": {
+      "E": {
+        "median": 0.06999999999999999,
+        "p95": 0.06999999999999999,
+        "max": 0.06999999999999999,
+        "n_unique": 1
+      },
+      "N": {
+        "median": 0.06999999999999999,
+        "p95": 0.06999999999999999,
+        "max": 0.06999999999999999,
+        "n_unique": 1
+      },
+      "U": {
+        "median": 0.1,
+        "p95": 0.1,
+        "max": 0.1,
+        "n_unique": 1
+      }
+    },
+    "receiver_state": {
+      "topic": "/piksi/debug/receiver_state",
+      "num_sat": {
+        "min": 41,
+        "median": 42.0,
+        "max": 45
+      },
+      "fix_mode_counts": {
+        "FIXED_RTK": 3932
+      }
+    },
+    "enu_consistency": {
+      "n": 3024,
+      "rms_3d_m": 0.04979360661568767,
+      "rms_horizontal_m": 0.04979200311945819,
+      "rms_vertical_m": 0.00039960624334641853,
+      "gt_to_enu_rotation_zyx_deg": [
+        90.00523813684673,
+        0.001232387895804064,
+        0.00018572659844847097
+      ]
+    }
+  }
+}

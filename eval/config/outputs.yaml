@@ -1,0 +1,16 @@
+# Which output of each method is the "headline" in figures and in the tuning
+# decision (brief Section 12: the highest-level real-time output). Changing a
+# value here is the single switch that changes every headline figure.
+headline:
+  hdl: full          # online map<-odom correction composed with /odom
+  lego: full         # /integrated_to_init (fused, high rate)
+  aloam: full        # /aft_mapped_to_init_high_frec (fused, high rate)
+  dlo: full
+  kiss: full
+  mesh: full
+
+# Lever-arm setting of the main results: "with" wherever the LiDAR->antenna
+# lever arm is known (CitrusFarm), since the ground truth is the antenna position.
+main_lever_arm:
+  citrusfarm: with
+  pullally: without  # pending OPEN_QUESTIONS.md Q6(b)

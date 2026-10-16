@@ -1,0 +1,7 @@
+method,label,output,lever_arm,n_runs,rmse_runs_m,rmse_mean_m,rmse_sd_m,rmse_min_m,rmse_max_m,realtime_topic,processed_scan_ratio_mean
+hdl,hdl Graph SLAM,full,with,3,4.3509 4.3507 4.3507,4.3508,0.0001,4.3507,4.3509,/odom,1.0
+lego,LeGO-LOAM,full,with,3,0.4713 0.4714 0.4713,0.4713,0.0001,0.4713,0.4714,/integrated_to_init,0.9993
+aloam,A-LOAM,full,with,3,1.1144 1.1719 1.1991,1.1618,0.0433,1.1144,1.1991,/aft_mapped_to_init_high_frec,0.9997
+dlo,DLO,full,with,3,0.6316 0.6167 0.4968,0.5817,0.0739,0.4968,0.6316,/robot/dlo/odom_node/odom,0.9992
+kiss,KISS-ICP,full,with,3,12.8814 1.2705 0.3954,4.8491,6.9699,0.3954,12.8814,/kiss/odometry,1.0
+mesh,SLAMesh,full,with,3,0.6955 0.4178 0.6555,0.5896,0.1501,0.4178,0.6955,/lidar_odometry,0.9997

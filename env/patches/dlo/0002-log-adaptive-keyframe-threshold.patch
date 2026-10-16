@@ -1,0 +1,52 @@
+# reason: logging only - print the keyframe distance/rotation thresholds actually used (adaptiveParams overrides keyframe/threshD) at every keyframe and every threshold change (brief Section 5.5); no computation, parameter or output topic is changed.
+diff --git a/src/dlo/odom.cc b/src/dlo/odom.cc
+index 4c8e28b..43e4fa5 100644
+--- a/src/dlo/odom.cc
++++ b/src/dlo/odom.cc
+@@ -509,6 +509,11 @@ void dlo::OdomNode::initializeInputTarget() {
+ 
+   ++this->num_keyframes;
+ 
++  // [slambench logging only] the first keyframe is created here, not in updateKeyframes()
++  ROS_INFO("[DLO_KF] kf=%d stamp=%.9f threshD_m=%.3f threshR_deg=%.3f first_keyframe=1 adaptive=%d",
++           this->num_keyframes, this->scan_stamp.toSec(), this->keyframe_thresh_dist_, this->keyframe_thresh_rot_,
++           (int) this->adaptive_params_use_);
++
+ }
+ 
+ 
+@@ -1161,6 +1166,11 @@ void dlo::OdomNode::updateKeyframes() {
+ 
+     ++this->num_keyframes;
+ 
++    // [slambench logging only] record the thresholds actually used for this keyframe decision
++    ROS_INFO("[DLO_KF] kf=%d stamp=%.9f threshD_m=%.3f threshR_deg=%.3f dd_m=%.4f dtheta_deg=%.4f num_nearby=%d adaptive=%d",
++             this->num_keyframes, this->scan_stamp.toSec(), this->keyframe_thresh_dist_, this->keyframe_thresh_rot_,
++             (double) dd, (double) theta_deg, num_nearby, (int) this->adaptive_params_use_);
++
+     // voxelization for submap
+     if (this->vf_submap_use_) {
+       this->vf_submap.setInputCloud(this->current_scan_t);
+@@ -1192,6 +1202,9 @@ void dlo::OdomNode::updateKeyframes() {
+ 
+ void dlo::OdomNode::setAdaptiveParams() {
+ 
++  // [slambench logging only] keep the previous threshold so that changes can be logged below
++  const double slambench_prev_thresh_dist = this->keyframe_thresh_dist_;
++
+   // Set Keyframe Thresh from Spaciousness Metric
+   if (this->metrics.spaciousness.back() > 20.0){
+     this->keyframe_thresh_dist_ = 10.0;
+@@ -1206,6 +1219,12 @@ void dlo::OdomNode::setAdaptiveParams() {
+   // set concave hull alpha
+   this->concave_hull.setAlpha(this->keyframe_thresh_dist_);
+ 
++  // [slambench logging only] report every change of the adaptive keyframe distance threshold
++  if (this->keyframe_thresh_dist_ != slambench_prev_thresh_dist) {
++    ROS_INFO("[DLO_KF_THRESH] stamp=%.9f threshD_m=%.3f prev_threshD_m=%.3f",
++             this->scan_stamp.toSec(), this->keyframe_thresh_dist_, slambench_prev_thresh_dist);
++  }
++
+ }
+ 
+ 

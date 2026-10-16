@@ -1,0 +1,14 @@
+# One-at-a-time sensitivity design, Plan A (decided by Nahuel on 12 October 2026). Levels from the
+# reviewed draft tuning_levels.yaml; selection rule in configs/SENSITIVITY_DESIGN.md.
+method: mesh
+status: LOCKED
+sequence: cf_5
+parameters:
+  - {id: b, name: minimum range, unit: m, module: FE, default: 0.5, levels: [1.0, 3.0],
+     changes: [{yaml_file: online.yaml, key: slamesher/range_min}]}
+  - {id: d, name: margin for old cells, unit: scan steps, module: FE, default: -1, levels: [100, 500],
+     changes: [{yaml_file: online.yaml, key: slamesher/num_margin_old_cell}]}
+  - {id: e, name: cell (grid) size, unit: m, module: FE, default: 1.2, levels: [1.0, 2.4],
+     changes: [{yaml_file: online.yaml, key: slamesher/grid}]}
+  - {id: g, name: GP test points per cell side, unit: points, module: FE, default: 6, levels: [3, 10],
+     changes: [{yaml_file: online.yaml, key: slamesher/num_test}]}

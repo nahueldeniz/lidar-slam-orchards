@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>slambench_tools</name>
+  <version>0.1.0</version>
+  <description>Infrastructure nodes for the orchard SLAM benchmark (frame logger).</description>
+  <!-- Public release: placeholder address and licence; set both before publishing (LICENSE_TO_CHOOSE.md). -->
+  <maintainer email="maintainer@example.org">Nahuel Deniz</maintainer>
+  <license>TO BE CHOSEN (see LICENSE_TO_CHOOSE.md)</license>
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roscpp</depend>
+  <depend>topic_tools</depend>
+</package>

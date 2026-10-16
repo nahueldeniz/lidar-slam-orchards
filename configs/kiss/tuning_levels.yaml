@@ -1,0 +1,102 @@
+# DRAFT - NOT FROZEN. KISS-ICP tuning parameters and levels (brief Section 5.0, steps 1-2).
+# Rationale and citations: configs/kiss/tuning_rationale.md. Do not run before Nahuel approves this draft.
+status: DRAFT
+method: kiss
+date: 2026-10-12
+source: PRBonn/kiss-icp@v0.3.0 (460c6f2cc3616c122c42006898036df9c20b636f)
+base_config: configs/kiss/D/kiss_D.launch
+apply_as: "roslaunch kiss_D.launch <launch_arg>:=<level>"
+tuning_sequences: [cf_4, cf_5]
+
+level_rule: >-
+  Each parameter gets two alternative levels: x0.5 and x2 of the D value. A level is replaced by a
+  submitted P1-P3 value lying on the same side of the default within a factor of 3, choosing the one
+  closest in ratio to x0.5 (or x2). One stated exception: min_range (see its note).
+
+parameters:
+  - id: a
+    brief_row: "5.6 a"
+    name: initial_threshold (tau_0, paper Table I)
+    launch_arg: initial_threshold
+    ros_params: [/odometry_node/initial_threshold]
+    unit: m
+    type: continuous
+    affects: FE
+    default: 2.0
+    levels:
+      - {value: 1.0, origin: "x0.5 = submitted P1/P2"}
+      - {value: 4.0, origin: "x2"}
+    submitted: {P1: 1.0, P2: 1.0, P3: 2.0}
+    limits: {min: 0.5, max: 5.0}
+
+  - id: b
+    brief_row: "5.6 b"
+    name: min_motion_th (delta_min, paper Table I)
+    launch_arg: min_motion_th
+    ros_params: [/odometry_node/min_motion_th]
+    unit: m
+    type: continuous
+    affects: FE
+    default: 0.1
+    levels:
+      - {value: 0.05, origin: "x0.5"}
+      - {value: 0.2,  origin: "x2 (submitted P1 = 0.5 is x5, outside the factor-3 window)"}
+    submitted: {P1: 0.5, P2: 0.1, P3: 0.1}
+    limits: {min: 0.02, max: 0.5}
+
+  - id: c
+    brief_row: "5.6 c"
+    name: max_points_per_voxel (N_max, paper Table I)
+    launch_arg: max_points_per_voxel
+    ros_params: [/odometry_node/max_points_per_voxel]
+    unit: points
+    type: integer
+    affects: FE
+    default: 20
+    levels:
+      - {value: 10, origin: "x0.5"}
+      - {value: 50, origin: "submitted P1/P2 (x2.5), replaces x2 = 40"}
+    submitted: {P1: 50, P2: 50, P3: 20}
+    limits: {min: 5, max: 100}
+
+  - id: d
+    brief_row: "5.6 d"
+    name: "voxel_size (v, paper Table I: 0.01 r_max)"
+    launch_arg: voxel_size
+    ros_params: [/odometry_node/voxel_size]
+    unit: m
+    type: continuous
+    affects: FE
+    default: 1.0          # = max_range / 100 with max_range 100
+    levels:
+      - {value: 0.5, origin: "x0.5 (submitted P1/P2 = 0.25 and P3 = 0.1 are x0.25 and x0.1, outside the factor-3 window)"}
+      - {value: 2.0, origin: "x2"}
+    submitted: {P1: 0.25, P2: 0.25, P3: 0.1}
+    limits: {min: 0.25, max: 2.0}
+
+  - id: e
+    brief_row: "5.6 e"
+    name: min_range (not a paper parameter)
+    launch_arg: min_range
+    ros_params: [/odometry_node/min_range]
+    unit: m
+    type: continuous
+    affects: FE
+    default: 5.0
+    levels:
+      - {value: 2.5, origin: "x0.5"}
+      - {value: 0.5, origin: "submitted P1-P3; replaces x2 = 10 m (EXCEPTION, see rationale): upstream config/advanced.yaml uses min_range 0.0"}
+    submitted: {P1: 0.5, P2: 0.5, P3: 0.5}
+    limits: {min: 0.5, max: 5.0}
+    note: "Both alternative levels are below the default; this is the one departure from the level rule. Nahuel to confirm (open question)."
+
+fixed:
+  max_range: {value: 100.0, unit: m, reason: "brief fixed setting; sensor value (paper Sec. III-F)"}
+  deskew: {value: false, reason: "brief fixed setting"}
+  visualize: {value: false, reason: "brief fixed setting; no RViz"}
+  not_exposed: "alpha 0.5, beta 1.5 (KissICP.cpp:85-86), ICP stop 1e-4 and 500 iterations (Registration.cpp:65-66): compile-time constants"
+
+run_budget:
+  one_at_a_time_runs: 20        # 5 parameters x 2 levels x 2 tuning sequences, 1 repetition
+  default_runs: 4               # D once on cf_4, D three times on cf_5 (run-to-run spread)
+  approx_playback_hours: 5.1    # (20 + 4) x ~12.7 min, plus cool-down and set-up

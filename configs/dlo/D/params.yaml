@@ -1,0 +1,77 @@
+#############################################################
+# DLO configuration D (default) for the orchard re-run.
+# Copy of direct_lidar_odometry cfg/params.yaml at commit 11528c02e89a1619ee3c42ba39ecaa992bd20bf4.
+# No value differs from upstream (no "# CHANGED" lines). Every parameter that odom.cc reads is
+# present, so no code default is used. "# NOTE:" comments are explanations only.
+# Loaded by dlo_D.launch into /robot/dlo_odom under ~dlo/odomNode/.
+#############################################################
+#                                                           #
+# Copyright (c) 2022, University of California, Los Angeles #
+#                                                           #
+# Authors: Kenny J. Chen, Brett T. Lopez                    #
+# Contact: kennyjchen@ucla.edu, btlopez@ucla.edu            #
+#                                                           #
+#############################################################
+
+dlo:
+
+  odomNode:
+
+    initialPose:
+      use: false   # NOTE: world frame = LiDAR frame of the first registered scan
+      position:
+        x: 0.0
+        y: 0.0
+        z: 0.0
+      orientation:
+        w: 1.0
+        x: 0.0
+        y: 0.0
+        z: 0.0
+
+    preprocessing:
+      cropBoxFilter:
+        use: true
+        size: 1.0    # NOTE: half edge [m]; removes points inside the cube [-1,1]^3 m around the sensor (odom.cc:123-125)
+      voxelFilter:
+        scan:
+          use: true
+          res: 0.25  # NOTE: leaf size [m] of the per-scan voxel grid (odom.cc:127, 465-468)
+        submap:
+          use: true
+          res: 0.5   # NOTE: leaf size [m] applied to each keyframe cloud when it is stored (odom.cc:128, 492-495, 1165-1168)
+
+    keyframe:
+      threshD: 5.0   # NOTE: INACTIVE in D and T: adaptiveParams overwrites it (0.5/1/5/10 m from spaciousness) before every use
+      threshR: 45.0  # NOTE: [deg]; not changed by adaptiveParams
+
+    submap:
+      keyframe:
+        knn: 10   # NOTE: nearest keyframes in the submap
+        kcv: 10   # NOTE: nearest keyframes among the convex-hull keyframes
+        kcc: 10   # NOTE: nearest keyframes among the concave-hull keyframes (hull alpha = adaptive threshD)
+
+    imu:
+      calibTime: 3       # NOTE: inactive (dlo/imu false)
+      bufferSize: 2000   # NOTE: only sizes the (unused) IMU buffer
+
+    gicp:
+      minNumPoints: 10   # NOTE: scans with fewer raw points are skipped (odom.cc:643)
+      s2s:
+        kCorrespondences: 10            # NOTE: neighbours for point covariance estimation
+        maxCorrespondenceDistance: 1.0  # NOTE: [m] correspondence rejection
+        maxIterations: 32
+        transformationEpsilon: 0.01     # NOTE: [m] translation convergence; rotation epsilon fixed at 2e-3 in code
+        euclideanFitnessEpsilon: 0.01   # NOTE: set but never read by NanoGICP (inactive)
+        ransac:
+          iterations: 5                 # NOTE: set but never read by NanoGICP (inactive)
+          outlierRejectionThresh: 1.0   # NOTE: set but never read by NanoGICP (inactive)
+      s2m:
+        kCorrespondences: 20
+        maxCorrespondenceDistance: 0.5
+        maxIterations: 32
+        transformationEpsilon: 0.01
+        euclideanFitnessEpsilon: 0.01   # NOTE: inactive, as above
+        ransac:
+          iterations: 5                 # NOTE: inactive, as above
+          outlierRejectionThresh: 1.0   # NOTE: inactive, as above

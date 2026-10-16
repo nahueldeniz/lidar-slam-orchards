@@ -1,0 +1,141 @@
+# DRAFT - NOT FROZEN. Do not run until Nahuel has reviewed it (brief Section 5.0, steps 1-2).
+# Tuning levels for SLAMesh (mesh). Rationale: configs/mesh/tuning_rationale.md.
+#
+# One-at-a-time design: each run = configuration D with exactly ONE parameter set to ONE level.
+# All keys live under 'slamesher:' in online.yaml. SLAMesh has a single output (/lidar_odometry),
+# produced by scan-to-mesh-map registration, so every parameter below can change it.
+status: DRAFT
+method: mesh
+source: "RuanJY/SLAMesh @ 50b4356e8a24c4fe2e2dc1be37d682e703843314"
+base_configuration: configs/mesh/D   # upstream online.yaml with visualisation_type 0
+tuning_sequences: [cf_4, cf_5]
+runs_per_level_per_sequence: 1
+runs_needed:
+  one_at_a_time: 28            # 7 parameters x 2 levels x 2 sequences (32 if h2 is approved)
+  d_spread_on_cf_5: 3
+  t_check: 2
+
+parameters:
+
+  - id: b
+    paper_name: "minimum range"
+    key: slamesher/range_min
+    unit: m
+    type: continuous
+    default: 0.5
+    levels: [1.0, 3.0]
+    level_rule: "1.0 = submitted P2/P3 (= x2); 3.0 = submitted P1 and the upstream default until 2025-01-05"
+    limits: {min: 0.3, max: 5.0}
+    limits_note: >-
+      Lower bound must still remove the robot's own returns (check the Jackal and Go1 geometry); the
+      upper bound must stay below the distance to the nearest canopy. Both bounds are provisional.
+
+  - id: c
+    paper_name: "registration iterations"
+    key: slamesher/register_times
+    unit: iterations (maximum; the loop stops earlier when the update norm is < 1e-5)
+    type: integer
+    default: 5
+    levels: [3, 7]
+    level_rule: "3 = x0.5 rounded up; 7 = submitted P3 (replaces x2 = 10)"
+    limits: {min: 2, max: 15}
+    limits_note: "The last iteration always uses cross-cell length 0 (map.cpp:1095-1099), so at least 2 iterations are needed for one cross-cell step."
+
+  - id: d
+    paper_name: "margin for old cells"
+    key: slamesher/num_margin_old_cell
+    unit: "scan steps (not seconds); -1 = never exclude old cells"
+    type: discrete
+    default: -1
+    levels: [100, 500]
+    level_rule: >-
+      Documented alternatives: 500 = README section 4.1 setting for KITTI odometry, submitted P1, and
+      the upstream default until 2025-01-05; 100 = submitted P3. (P2 = 750 not used.)
+    limits: {allowed: "-1 or >= 50"}
+    limits_note: >-
+      Cells not updated for this many steps are excluded from registration and map update. Steps
+      are scans, so the same value means 2.5 times more time on Pullally (4 Hz) than on CitrusFarm
+      (10 Hz).
+
+  - id: e
+    paper_name: "cell (grid) size"
+    key: slamesher/grid
+    unit: m (cell edge)
+    type: continuous
+    default: 1.2
+    levels: [1.0, 2.4]
+    level_rule: "1.0 = submitted P2/P3 (replaces x0.5 = 0.6); 2.4 = x2"
+    limits: {min: 0.6, max: 3.0}
+    limits_note: >-
+      The paper reports that the method still works with 3 m cells. NOTE the coupling: the input voxel
+      leaf is grid/num_test (slamesher_node.cpp:521), i.e. 0.167 m at 1.0 and 0.4 m at 2.4.
+
+  - id: f
+    paper_name: "min. points per cell for GP reconstruction"
+    key: slamesher/min_points_num_to_gp
+    unit: points (a cell is reconstructed only if it holds MORE than this many)
+    type: integer
+    default: 3
+    levels: [2, 5]
+    level_rule: "2 = x0.5 rounded up; 5 = submitted P2/P3 (replaces x2 = 6)"
+    limits: {min: 1, max: 10}
+
+  - id: g
+    paper_name: "GP test points per cell side"
+    key: slamesher/num_test
+    unit: test points per side (num_test^2 vertices per cell layer)
+    type: integer
+    default: 6
+    levels: [3, 10]
+    level_rule: "3 = x0.5; 10 = submitted P3 (replaces x2 = 12)"
+    limits: {min: 3, max: 12}
+    limits_note: >-
+      Coupled to the input voxel leaf grid/num_test: 0.4 m at 3, 0.12 m at 10. GP cost grows with
+      num_test^2 per cell, so 10 may run slower than real time (no scans are dropped, but the lag
+      must stay below the post-playback wait; see the open questions).
+
+  - id: i
+    paper_name: "sensor variance"
+    key: slamesher/variance_sensor
+    unit: "m (GP observation-noise standard deviation; enters the kernel diagonal squared, cell.cpp:170)"
+    type: continuous
+    default: 0.02
+    levels: [0.01, 0.1]
+    level_rule: "0.01 = x0.5; 0.1 = submitted P2/P3 (replaces x2 = 0.04)"
+    limits: {min: 0.005, max: 0.2}
+
+  - id: h2
+    status: PROPOSED_OUTSIDE_CANDIDATE_TABLE   # needs Nahuel's approval; not in brief Table 5.7
+    paper_name: "constraints (residual) combination"
+    key: slamesher/residual_combination
+    unit: boolean
+    type: discrete
+    default: false
+    levels: [true]
+    level_rule: "Documented alternative: true = upstream default until 2025-01-05 and the 'Comb.' variant of the paper's ablation (Sec. III-C, IV-E)"
+    limits: {allowed: [false, true]}
+
+fixed_in_D_and_T:
+  slamesher/visualisation_type: 0       # no visualisation; read-only on the map, no trajectory effect
+  slamesher/grt_available: false        # no ground-truth input
+  slamesher/odom_available: false       # no odometry/altitude input (LiDAR only)
+  slamesher/imu_feedback: false
+  slamesher/read_offline_pcd: false
+  slamesher/num_thread: 8               # upstream; per-cell GP threads, runtime only
+  everything_else: upstream online.yaml @ 50b4356
+
+excluded:
+  - key: slamesher/variance_min
+    reason: >-
+      Inactive in D and T: it is used only by the point-to-point solver Map::computeT
+      (map.cpp:949-950). With point2mesh: true (upstream), registration always calls
+      Map::computeTPointToMesh, where the value is read into an unused local (map.cpp:995).
+  - key: slamesher/range_max
+    reason: >-
+      Not varied in P1-P3. x2 = 120 m crosses the code's 100 m switch, above which NO range
+      filtering is done at all (range_min is ignored too, map.cpp:64-78), so the upper level would not
+      be a one-factor change. Kept at 60 m.
+  - key: "slamesher/num_thread, slamesher/visualisation_type"
+    reason: "Runtime only; no effect on the trajectory (recorded)."
+  - key: "slamesher/cross_overlap, meshing_tsdf, test_param, range_unit, max_steps, dataset, use_sim_time"
+    reason: "No effect on the trajectory: read but never used (cross_overlap, meshing_tsdf, test_param, range_unit, use_sim_time), log pre-allocation only (max_steps), or offline-reader only (dataset)."

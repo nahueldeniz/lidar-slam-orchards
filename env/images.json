@@ -1,0 +1,397 @@
+{
+  "slambench/dlo:melodic": {
+    "tag": "slambench/dlo:melodic",
+    "returncode": 0,
+    "seconds": 61,
+    "log": "env/build_logs/dlo.log",
+    "build_args": {},
+    "labels": {
+      "slambench.method": "dlo"
+    },
+    "id": "sha256:1bb562b692072837365dd8abadb4efa183ef158aed93c76b714147aaae13fa6b"
+  },
+  "slambench/hdl:melodic": {
+    "tag": "slambench/hdl:melodic",
+    "returncode": 0,
+    "seconds": 84,
+    "log": "env/build_logs/hdl.log",
+    "build_args": {},
+    "labels": {
+      "slambench.method": "hdl"
+    },
+    "id": "sha256:2e48b701ad2d8ba97f0d3b99deb9a7bb9b3dab8beeda9cd57dc93448ca972cf9"
+  },
+  "slambench/mesh:melodic": {
+    "tag": "slambench/mesh:melodic",
+    "returncode": 0,
+    "seconds": 1,
+    "log": "env/build_logs/mesh.log",
+    "build_args": {},
+    "labels": {
+      "slambench.method": "mesh"
+    },
+    "id": "sha256:e75428d1a417f8d1d1766e9adfc91a628ea3cc2e5b713364afae928b755f003e"
+  },
+  "slambench/kiss:melodic": {
+    "tag": "slambench/kiss:melodic",
+    "returncode": 0,
+    "seconds": 47,
+    "log": "env/build_logs/kiss.log",
+    "build_args": {},
+    "labels": {
+      "slambench.method": "kiss"
+    },
+    "id": "sha256:01a8e7dc73dbfe1fcfafc3d7d6c257d31bd285b9a2f51e4dfa743d19ca3cd482"
+  },
+  "slambench/aloam:D": {
+    "tag": "slambench/aloam:D",
+    "returncode": 0,
+    "seconds": 82,
+    "log": "env/build_logs/aloam_D.log",
+    "build_args": {
+      "DISTANCE_SQ_THRESHOLD": "",
+      "NEARBY_SCAN": "",
+      "ODOM_HUBER_DELTA": "",
+      "MAPPING_HUBER_DELTA": "",
+      "SCAN_PERIOD": ""
+    },
+    "labels": {
+      "slambench.method": "aloam",
+      "slambench.config": "D",
+      "slambench.constants_sha256": "ec53eda32e8881210309a6d609a58388d1dda413648043b280a69927cf630e22"
+    },
+    "id": "sha256:36cb88817fce0ec9ae8d538c7d2bd210e328ef5c032be5684c0e0a0649487e65"
+  },
+  "slambench/aloam:OAT_c_0.2": {
+    "tag": "slambench/aloam:OAT_c_0.2",
+    "returncode": 0,
+    "seconds": 0,
+    "log": "env/build_logs/aloam_OAT_c_0.2.log",
+    "build_args": {
+      "DISTANCE_SQ_THRESHOLD": "",
+      "NEARBY_SCAN": "",
+      "ODOM_HUBER_DELTA": "",
+      "MAPPING_HUBER_DELTA": "",
+      "SCAN_PERIOD": ""
+    },
+    "labels": {
+      "slambench.method": "aloam",
+      "slambench.config": "OAT_c_0.2",
+      "slambench.constants_sha256": "ec53eda32e8881210309a6d609a58388d1dda413648043b280a69927cf630e22"
+    },
+    "id": "sha256:2afa0439a99ec685876d1917a8e7870ee6d484e93c23443a2c180ee8cbd3ddd0"
+  },
+  "slambench/aloam:OAT_c_0.8": {
+    "tag": "slambench/aloam:OAT_c_0.8",
+    "returncode": 0,
+    "seconds": 0,
+    "log": "env/build_logs/aloam_OAT_c_0.8.log",
+    "build_args": {
+      "DISTANCE_SQ_THRESHOLD": "",
+      "NEARBY_SCAN": "",
+      "ODOM_HUBER_DELTA": "",
+      "MAPPING_HUBER_DELTA": "",
+      "SCAN_PERIOD": ""
+    },
+    "labels": {
+      "slambench.method": "aloam",
+      "slambench.config": "OAT_c_0.8",
+      "slambench.constants_sha256": "ec53eda32e8881210309a6d609a58388d1dda413648043b280a69927cf630e22"
+    },
+    "id": "sha256:460acf36f9240c1d068e9c0ceadc1e863cd4c228cd165ba651d9db6c540028d9"
+  },
+  "slambench/aloam:OAT_d_1.5": {
+    "tag": "slambench/aloam:OAT_d_1.5",
+    "returncode": 0,
+    "seconds": 24,
+    "log": "env/build_logs/aloam_OAT_d_1.5.log",
+    "build_args": {
+      "DISTANCE_SQ_THRESHOLD": "",
+      "NEARBY_SCAN": "1.5",
+      "ODOM_HUBER_DELTA": "",
+      "MAPPING_HUBER_DELTA": "",
+      "SCAN_PERIOD": ""
+    },
+    "labels": {
+      "slambench.method": "aloam",
+      "slambench.config": "OAT_d_1.5",
+      "slambench.constants_sha256": "0e59988cf238c54af333d80d9ce1720da12f759155aababd1aa33ab066b7c033"
+    },
+    "id": "sha256:e90c1a1d7e1ad36e4149a4543b4bccfbc511a3f16fc8d882ef8f85a9accec4e9"
+  },
+  "slambench/aloam:OAT_d_4": {
+    "tag": "slambench/aloam:OAT_d_4",
+    "returncode": 0,
+    "seconds": 26,
+    "log": "env/build_logs/aloam_OAT_d_4.log",
+    "build_args": {
+      "DISTANCE_SQ_THRESHOLD": "",
+      "NEARBY_SCAN": "4",
+      "ODOM_HUBER_DELTA": "",
+      "MAPPING_HUBER_DELTA": "",
+      "SCAN_PERIOD": ""
+    },
+    "labels": {
+      "slambench.method": "aloam",
+      "slambench.config": "OAT_d_4",
+      "slambench.constants_sha256": "fb6391edacb976e9ed3b330c072a3d0627ea4fd8e18f4436cfcfdc6b808d227a"
+    },
+    "id": "sha256:7623609aca64999d37c23dd5c5aca9fda5e0f22167065a1f32acc0ad15571b5c"
+  },
+  "slambench/aloam:OAT_e_0.05": {
+    "tag": "slambench/aloam:OAT_e_0.05",
+    "returncode": 0,
+    "seconds": 42,
+    "log": "env/build_logs/aloam_OAT_e_0.05.log",
+    "build_args": {
+      "DISTANCE_SQ_THRESHOLD": "",
+      "NEARBY_SCAN": "",
+      "ODOM_HUBER_DELTA": "0.05",
+      "MAPPING_HUBER_DELTA": "",
+      "SCAN_PERIOD": ""
+    },
+    "labels": {
+      "slambench.method": "aloam",
+      "slambench.config": "OAT_e_0.05",
+      "slambench.constants_sha256": "82cc53f5839dec07f099b5bb26af857bbbc15fa933211dd4601aae139d8a13b0"
+    },
+    "id": "sha256:5bbdf044414af6d78cae291119831521ab4ab7b44c5dfd42813e25ae63120523"
+  },
+  "slambench/aloam:OAT_e_0.2": {
+    "tag": "slambench/aloam:OAT_e_0.2",
+    "returncode": 0,
+    "seconds": 26,
+    "log": "env/build_logs/aloam_OAT_e_0.2.log",
+    "build_args": {
+      "DISTANCE_SQ_THRESHOLD": "",
+      "NEARBY_SCAN": "",
+      "ODOM_HUBER_DELTA": "0.2",
+      "MAPPING_HUBER_DELTA": "",
+      "SCAN_PERIOD": ""
+    },
+    "labels": {
+      "slambench.method": "aloam",
+      "slambench.config": "OAT_e_0.2",
+      "slambench.constants_sha256": "cacd6cc579615a89b116b1b866732774f939d1837fc59a6dd0c2dcec6adda5ef"
+    },
+    "id": "sha256:f204eba08ac92c2b2793320dcb9ef50052830c2ce5f7394c219fab53f5a68caa"
+  },
+  "slambench/aloam:OAT_f_0.05": {
+    "tag": "slambench/aloam:OAT_f_0.05",
+    "returncode": 0,
+    "seconds": 24,
+    "log": "env/build_logs/aloam_OAT_f_0.05.log",
+    "build_args": {
+      "DISTANCE_SQ_THRESHOLD": "",
+      "NEARBY_SCAN": "",
+      "ODOM_HUBER_DELTA": "",
+      "MAPPING_HUBER_DELTA": "0.05",
+      "SCAN_PERIOD": ""
+    },
+    "labels": {
+      "slambench.method": "aloam",
+      "slambench.config": "OAT_f_0.05",
+      "slambench.constants_sha256": "f37001093b4129501e27648c9ad15d0619a9f1d2b7f44cccbc07c0ef2e186eae"
+    },
+    "id": "sha256:8ede132b5590ccb014d3e2495f7392a529aba983c63e47906ed4a8e8a0c63e45"
+  },
+  "slambench/aloam:OAT_f_0.2": {
+    "tag": "slambench/aloam:OAT_f_0.2",
+    "returncode": 0,
+    "seconds": 23,
+    "log": "env/build_logs/aloam_OAT_f_0.2.log",
+    "build_args": {
+      "DISTANCE_SQ_THRESHOLD": "",
+      "NEARBY_SCAN": "",
+      "ODOM_HUBER_DELTA": "",
+      "MAPPING_HUBER_DELTA": "0.2",
+      "SCAN_PERIOD": ""
+    },
+    "labels": {
+      "slambench.method": "aloam",
+      "slambench.config": "OAT_f_0.2",
+      "slambench.constants_sha256": "82251950fbe65abb85b7d39f1db5a4ce110f7b175f6d3455eb44ca085e18d22b"
+    },
+    "id": "sha256:c05f9543dc900787555540775450e1672a720ca0fe31cf9d6bd32f23ed9361af"
+  },
+  "slambench/lego:D": {
+    "tag": "slambench/lego:D",
+    "returncode": 0,
+    "seconds": 178,
+    "log": "env/build_logs/lego_D.log",
+    "build_args": {
+      "MAPPING_PROCESS_INTERVAL": "",
+      "SEGMENT_THETA_DEG": "",
+      "EDGE_THRESHOLD": "",
+      "SURF_THRESHOLD": "",
+      "NEAREST_FEATURE_SEARCH_SQ_DIST": "",
+      "SCAN_PERIOD": ""
+    },
+    "labels": {
+      "slambench.method": "lego",
+      "slambench.config": "D",
+      "slambench.constants_sha256": "228e41184a8ec77ffb12da5fa1626db080dc9f3c75a6590e76ca839c1e53dbb3"
+    },
+    "id": "sha256:60d888edeb185b63556ced1b09c1e695fa7f920b3e3cb8184b4e3837f9eacffb"
+  },
+  "slambench/lego:OAT_a_0.15": {
+    "tag": "slambench/lego:OAT_a_0.15",
+    "returncode": 0,
+    "seconds": 64,
+    "log": "env/build_logs/lego_OAT_a_0.15.log",
+    "build_args": {
+      "MAPPING_PROCESS_INTERVAL": "0.15",
+      "SEGMENT_THETA_DEG": "",
+      "EDGE_THRESHOLD": "",
+      "SURF_THRESHOLD": "",
+      "NEAREST_FEATURE_SEARCH_SQ_DIST": "",
+      "SCAN_PERIOD": ""
+    },
+    "labels": {
+      "slambench.method": "lego",
+      "slambench.config": "OAT_a_0.15",
+      "slambench.constants_sha256": "6c2b50214d67df22003a16a163fd4286297e7298c48d6994d9bd3392610cf33d"
+    },
+    "id": "sha256:bf70f7bae43cad0692a01b61dee3cee38b311f8c2ff470a13c41bfcd4ea76ccf"
+  },
+  "slambench/lego:OAT_a_0.6": {
+    "tag": "slambench/lego:OAT_a_0.6",
+    "returncode": 0,
+    "seconds": 64,
+    "log": "env/build_logs/lego_OAT_a_0.6.log",
+    "build_args": {
+      "MAPPING_PROCESS_INTERVAL": "0.6",
+      "SEGMENT_THETA_DEG": "",
+      "EDGE_THRESHOLD": "",
+      "SURF_THRESHOLD": "",
+      "NEAREST_FEATURE_SEARCH_SQ_DIST": "",
+      "SCAN_PERIOD": ""
+    },
+    "labels": {
+      "slambench.method": "lego",
+      "slambench.config": "OAT_a_0.6",
+      "slambench.constants_sha256": "a2568fa4e567ad97b5c94c45730a09f45b78e38e95b0d46eb76b2d26e025e8f3"
+    },
+    "id": "sha256:a293e2da30fd0073e93081d04ff46bc36fe8fb75ff9985d06555563a183b603e"
+  },
+  "slambench/lego:OAT_b_10": {
+    "tag": "slambench/lego:OAT_b_10",
+    "returncode": 0,
+    "seconds": 63,
+    "log": "env/build_logs/lego_OAT_b_10.log",
+    "build_args": {
+      "MAPPING_PROCESS_INTERVAL": "",
+      "SEGMENT_THETA_DEG": "10",
+      "EDGE_THRESHOLD": "",
+      "SURF_THRESHOLD": "",
+      "NEAREST_FEATURE_SEARCH_SQ_DIST": "",
+      "SCAN_PERIOD": ""
+    },
+    "labels": {
+      "slambench.method": "lego",
+      "slambench.config": "OAT_b_10",
+      "slambench.constants_sha256": "4a753e54df43410d59317c16e9e2acd821db7383cb455fa233a1941883d5aed0"
+    },
+    "id": "sha256:e65504d286014ada872d1622f965cd7ab46340587898f6aab7bc8073950f0f55"
+  },
+  "slambench/lego:OAT_b_30": {
+    "tag": "slambench/lego:OAT_b_30",
+    "returncode": 0,
+    "seconds": 65,
+    "log": "env/build_logs/lego_OAT_b_30.log",
+    "build_args": {
+      "MAPPING_PROCESS_INTERVAL": "",
+      "SEGMENT_THETA_DEG": "30",
+      "EDGE_THRESHOLD": "",
+      "SURF_THRESHOLD": "",
+      "NEAREST_FEATURE_SEARCH_SQ_DIST": "",
+      "SCAN_PERIOD": ""
+    },
+    "labels": {
+      "slambench.method": "lego",
+      "slambench.config": "OAT_b_30",
+      "slambench.constants_sha256": "4c68dc9af7aed2afe34a21eef9a3138b404689201acbafab99a10fe1761ff8f3"
+    },
+    "id": "sha256:0c95b69f7004d1dd94f77ade5d39f1183409adb6170b23e88b25a12cc70a89ad"
+  },
+  "slambench/lego:OAT_d_0.05": {
+    "tag": "slambench/lego:OAT_d_0.05",
+    "returncode": 0,
+    "seconds": 65,
+    "log": "env/build_logs/lego_OAT_d_0.05.log",
+    "build_args": {
+      "MAPPING_PROCESS_INTERVAL": "",
+      "SEGMENT_THETA_DEG": "",
+      "EDGE_THRESHOLD": "0.05",
+      "SURF_THRESHOLD": "",
+      "NEAREST_FEATURE_SEARCH_SQ_DIST": "",
+      "SCAN_PERIOD": ""
+    },
+    "labels": {
+      "slambench.method": "lego",
+      "slambench.config": "OAT_d_0.05",
+      "slambench.constants_sha256": "07d58a5ce5d260ef221ef6b2786721ca16bb2673c2a05ddf7d0ced835f43154d"
+    },
+    "id": "sha256:5b250a13a6b30d9e46f760e2fe5760006cb0999a9441d1d9d11dbef752944b21"
+  },
+  "slambench/lego:OAT_d_0.2": {
+    "tag": "slambench/lego:OAT_d_0.2",
+    "returncode": 0,
+    "seconds": 65,
+    "log": "env/build_logs/lego_OAT_d_0.2.log",
+    "build_args": {
+      "MAPPING_PROCESS_INTERVAL": "",
+      "SEGMENT_THETA_DEG": "",
+      "EDGE_THRESHOLD": "0.2",
+      "SURF_THRESHOLD": "",
+      "NEAREST_FEATURE_SEARCH_SQ_DIST": "",
+      "SCAN_PERIOD": ""
+    },
+    "labels": {
+      "slambench.method": "lego",
+      "slambench.config": "OAT_d_0.2",
+      "slambench.constants_sha256": "d1fa9df683b6c4f00f9494d644f49fe06306546a14aa6689438f0051d892ed98"
+    },
+    "id": "sha256:57687b0e1eb60fdc69f502b90ace1bb927beae69f6819a540a1c771d92212658"
+  },
+  "slambench/lego:OAT_g_10": {
+    "tag": "slambench/lego:OAT_g_10",
+    "returncode": 0,
+    "seconds": 78,
+    "log": "env/build_logs/lego_OAT_g_10.log",
+    "build_args": {
+      "MAPPING_PROCESS_INTERVAL": "",
+      "SEGMENT_THETA_DEG": "",
+      "EDGE_THRESHOLD": "",
+      "SURF_THRESHOLD": "",
+      "NEAREST_FEATURE_SEARCH_SQ_DIST": "10",
+      "SCAN_PERIOD": ""
+    },
+    "labels": {
+      "slambench.method": "lego",
+      "slambench.config": "OAT_g_10",
+      "slambench.constants_sha256": "ba48bba5e0349e2839bb25dcfd62ec8fb605ad20ad1e032a178faf54d2630a80"
+    },
+    "id": "sha256:0b380a09700aa04b19846c66cfec108dc046a444fde14710d423e6430d34d307"
+  },
+  "slambench/lego:OAT_g_50": {
+    "tag": "slambench/lego:OAT_g_50",
+    "returncode": 0,
+    "seconds": 64,
+    "log": "env/build_logs/lego_OAT_g_50.log",
+    "build_args": {
+      "MAPPING_PROCESS_INTERVAL": "",
+      "SEGMENT_THETA_DEG": "",
+      "EDGE_THRESHOLD": "",
+      "SURF_THRESHOLD": "",
+      "NEAREST_FEATURE_SEARCH_SQ_DIST": "50",
+      "SCAN_PERIOD": ""
+    },
+    "labels": {
+      "slambench.method": "lego",
+      "slambench.config": "OAT_g_50",
+      "slambench.constants_sha256": "073232091f73204552558aa8b99c97c9ccf6c4472cde6b274ad1508b16971f09"
+    },
+    "id": "sha256:1cdca63efbf5668cc53723b25ff76a7a64924c08eb7e6f3d8cb94ed67abf2532"
+  }
+}

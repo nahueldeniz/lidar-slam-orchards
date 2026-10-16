@@ -1,0 +1,85 @@
+{
+  "seq": "cf_5",
+  "gt_bag": "citrusfarm/ground_truth/05_13D_Jackal/gt.bag",
+  "topic": "/gps/fix/odometry",
+  "msgtype": "nav_msgs/msg/Odometry",
+  "frame_ids": [
+    "rtk_path_frame"
+  ],
+  "child_frame_ids": [],
+  "count": 7593,
+  "t_start": 1689552313.474646,
+  "t_end": 1689553072.630737,
+  "span_s": 759.1560909748077,
+  "median_rate_hz": 9.981981853339283,
+  "gap_threshold_s": 0.2,
+  "gaps": [],
+  "n_duplicate_stamps": 0,
+  "orientation_populated": false,
+  "path_length_3d_all_samples_m": 865.3406040166391,
+  "path_length_3d_min_step_m": 860.5662933682909,
+  "path_length_published_m": 865.3,
+  "position_first": [
+    0.0,
+    -0.0,
+    0.0
+  ],
+  "pose_covariance_populated_fraction": 0.0,
+  "rtk": {
+    "status": "ok",
+    "topic": "/piksi/navsatfix_best_fix",
+    "count": 7593,
+    "median_rate_hz": 9.981981853339283,
+    "fix_status_counts": {
+      "GBAS fix": 7593
+    },
+    "fix_status_percent": {
+      "GBAS fix": 100.0
+    },
+    "covariance_type_values": [
+      1
+    ],
+    "sigma_enu_m": {
+      "E": {
+        "median": 0.06999999999999999,
+        "p95": 0.06999999999999999,
+        "max": 0.06999999999999999,
+        "n_unique": 1
+      },
+      "N": {
+        "median": 0.06999999999999999,
+        "p95": 0.06999999999999999,
+        "max": 0.06999999999999999,
+        "n_unique": 1
+      },
+      "U": {
+        "median": 0.1,
+        "p95": 0.1,
+        "max": 0.1,
+        "n_unique": 1
+      }
+    },
+    "receiver_state": {
+      "topic": "/piksi/debug/receiver_state",
+      "num_sat": {
+        "min": 37,
+        "median": 40.0,
+        "max": 44
+      },
+      "fix_mode_counts": {
+        "FIXED_RTK": 9875
+      }
+    },
+    "enu_consistency": {
+      "n": 7593,
+      "rms_3d_m": 0.01853093554876739,
+      "rms_horizontal_m": 0.01852939384455512,
+      "rms_vertical_m": 0.0002390315166120836,
+      "gt_to_enu_rotation_zyx_deg": [
+        90.00457711235944,
+        0.0012010090403738304,
+        0.0002174286059821723
+      ]
+    }
+  }
+}
