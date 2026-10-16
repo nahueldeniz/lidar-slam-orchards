@@ -21,7 +21,7 @@ Contents:
 9. [Data, licences and citation](#9-data-licences-and-citation)
 10. [Troubleshooting](#10-troubleshooting)
 
-**Command status.** Every command below was run while preparing this repository (Ubuntu 22.04, Docker 29.7.2, Python 3.10.12, uv 0.11.16), unless it is marked **[untested]**. Downloads from the internet (`git clone` from GitHub, `docker pull` from ghcr.io, the CitrusFarm and Zenodo downloads) could not be tested before publication: the demo was tested from a local clone, with the published images present as local tags of the same builds, and with the official CitrusFarm file already downloaded (its MD5 checked by the demo).
+**Command status.** Every command below was run while preparing this repository (Ubuntu 22.04, Docker 29.7.2, Python 3.10.12, uv 0.11.16), unless it is marked **[untested]**. After publication, on 16 October 2026, the following were tested: `git clone` from GitHub followed by `make venv` and a short demo (`make demo METHODS=kiss DURATION=60`); anonymous access to all eight images on ghcr.io (manifests fetched without credentials, and one image pulled and its digest checked); the download of the demo bag from the CitrusFarm server, which matched the official MD5; and the download of the Zenodo package followed by Section 7. The full six-method demo was run from clean clones of this repository on the benchmark laptop. A first download of all images on a machine that does not have them yet was not tested.
 
 ---
 
@@ -36,14 +36,14 @@ You need a Linux x86-64 machine with:
 - port 11311 free (no ROS 1 master running).
 
 ```bash
-git clone https://github.com/nahueldeniz/lidar-slam-orchards.git   # [untested] until published
+git clone https://github.com/nahueldeniz/lidar-slam-orchards.git
 cd lidar-slam-orchards
 make venv          # Python environment .venv from env/requirements-eval.lock.txt (uv)
 make demo-check    # checks Docker, disk and port; gets the images and the demo bag; no runs
 make demo          # the six methods on CitrusFarm 06, then evaluation and report (about 40 min)
 ```
 
-`make demo-check` pulls the seven images (about 1.3 GB to download; **[untested]** until they are published) and downloads the CitrusFarm bag (2.49 GB, resumable; the download from the dataset's server is **[untested]**, the resume and MD5 logic was tested on a local copy). You can skip it: `make demo` does the same checks first.
+`make demo-check` pulls the seven images (public on ghcr.io; about 1.3 GB to download) and downloads the CitrusFarm bag (2.49 GB, resumable, checked against the official MD5; the resume logic was tested on a local copy). You can skip it: `make demo` does the same checks first.
 
 A two-minute check that everything works, with one method and the first 60 s of the bag (not comparable with the paper):
 
@@ -209,7 +209,17 @@ The demo uses the local build tags (`slambench/...`, third column of `demo/image
 
 ## 7. Regenerate the paper's results from the Zenodo package
 
-The paper's numbers, figures and tables come from the recorded run outputs, which are in the Zenodo package (DOI 10.5281/zenodo.23405930, about 180 MB zipped). The package contains the same code as this repository (without `demo/`) and its own README. Download and unpack it **[untested]**, then, in the package folder:
+The paper's numbers, figures and tables come from the recorded run outputs, which are in the Zenodo package (DOI 10.5281/zenodo.23405930, about 180 MB zipped). The package contains the same code as this repository (without `demo/`) and its own README. Download, check and unpack it:
+
+```bash
+curl -L -o lidar_slam_orchards_release.zip "https://zenodo.org/records/23405930/files/lidar_slam_orchards_release.zip?download=1"
+md5sum lidar_slam_orchards_release.zip        # da78b8d3ce70bf5b1f2b79b6775abc55
+mkdir lidar_slam_orchards_release && cd lidar_slam_orchards_release
+unzip -q ../lidar_slam_orchards_release.zip
+sha256sum -c SHA256SUMS --quiet               # no output: every file is intact
+```
+
+Then, in the package folder:
 
 ```bash
 make venv                             # .venv from env/requirements-eval.lock.txt
@@ -218,7 +228,7 @@ make results OUT=/tmp/regen           # eval CSVs, figures F0-F11 and tables T1-
 make check-results OUT=/tmp/regen     # compare with the shipped eval/ and tables/
 ```
 
-ZENODO_TEST_NOTE
+Tested on 16 October 2026 from the Zenodo download: the 29 tests passed, `make results` took 3 min 5 s on the benchmark laptop, and `make check-results` reported ALL MATCH. The printed tables are byte-identical to the shipped ones. In the data tables, the full-precision alignment-B values differ by up to 1.7 mm because the shipped trajectories are rounded to 1 µm (the raw recordings, not included, reproduce them exactly), which is why `check-results` allows 2 mm for those rows.
 
 To repeat the measured campaign itself (156 runs, about two days of machine time, the full datasets and the benchmark laptop's settings), see Sections 4 to 6 of the package README (`make batch1`, `make batch2`; **[untested]** here).
 
