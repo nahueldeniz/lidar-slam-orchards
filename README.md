@@ -79,18 +79,18 @@ Output, in `demo_output/` (a previous `demo_output/` is moved aside to `demo_out
 
 **Run time.** About 5.7 min per method (302 s of playback and about 40 s to start and stop the containers), and about 10 s for the evaluation and the report: 34 min 53 s for the six methods on the benchmark laptop. The first run also pulls the images (about 1.3 GB) and downloads the bag (2.49 GB).
 
-**Expected results.** The paper's values and two full demo runs on the benchmark laptop, each from a clean clone of this repository, without CPU pinning, on the normal desktop (configuration D, alignment A, 3D RMSE in m, lever arm compensated; processed-scan ratio of the second run):
+**Expected results.** The paper's values and three full demo runs on the benchmark laptop, each from a clean clone of this repository while the laptop was in normal desktop use: runs 1 and 2 without CPU pinning, run 3 pinned as in the paper (`CPUSET_METHOD=0-11 CPUSET_INFRA=12-15`). Configuration D, alignment A, 3D RMSE in m, lever arm compensated; processed-scan ratio of run 3:
 
-| Method | Paper: mean ± SD | Paper: the 3 runs | Demo run 1 | Demo run 2 | Processed-scan ratio |
-|---|---|---|---|---|---|
-| LeGO-LOAM | 0.471 ± 0.000 | 0.471, 0.471, 0.471 | 0.480 | 0.441 | 0.998 |
-| DLO | 0.582 ± 0.074 | 0.632, 0.617, 0.497 | 1.076 | 0.663 | 0.998 |
-| SLAMesh | 0.590 ± 0.150 | 0.696, 0.418, 0.655 | 0.585 | 0.661 | 1.000 |
-| A-LOAM | 1.162 ± 0.043 | 1.114, 1.172, 1.199 | 1.151 | 1.226 | 1.000 |
-| hdl Graph SLAM | 4.351 ± 0.000 | 4.351, 4.351, 4.351 | 4.352 | 4.351 | 1.000 |
-| KISS-ICP | 4.849 ± 6.970 | 12.881, 1.270, 0.395 | 11.198 | 0.643 | 1.000 |
+| Method | Paper: mean ± SD | Paper: the 3 runs | Demo run 1 | Demo run 2 | Demo run 3 (pinned) | Processed-scan ratio |
+|---|---|---|---|---|---|---|
+| LeGO-LOAM | 0.471 ± 0.000 | 0.471, 0.471, 0.471 | 0.480 | 0.441 | 0.368 | 0.999 |
+| DLO | 0.582 ± 0.074 | 0.632, 0.617, 0.497 | 1.076 | 0.663 | 0.765 | 0.999 |
+| SLAMesh | 0.590 ± 0.150 | 0.696, 0.418, 0.655 | 0.585 | 0.661 | 0.522 | 1.000 |
+| A-LOAM | 1.162 ± 0.043 | 1.114, 1.172, 1.199 | 1.151 | 1.226 | 1.096 | 1.000 |
+| hdl Graph SLAM | 4.351 ± 0.000 | 4.351, 4.351, 4.351 | 4.352 | 4.351 | 4.351 | 1.000 |
+| KISS-ICP | 4.849 ± 6.970 | 12.881, 1.270, 0.395 | 11.198 | 0.643 | 0.887 | 1.000 |
 
-DLO_NOTE
+On a laptop in normal use, LeGO-LOAM and DLO vary between runs more than in the paper, whose runs were made on an idle machine: LeGO-LOAM gave 0.37 to 0.48 m (paper 0.471 m) and DLO 0.42 to 1.08 m in the demo runs and in two further DLO checks (paper 0.50 to 0.63 m). Under real-time playback their results depend on how the scans are scheduled on a loaded machine, and DLO's NanoGICP registration uses one OpenMP thread per CPU of the container, so its result also depends on the CPU pinning. For the closest comparison with the paper, run the demo on an otherwise idle machine and, on a similar hybrid CPU, pin it as in the paper: `make demo CPUSET_METHOD=0-11 CPUSET_INFRA=12-15`.
 
 Real-time results depend on the machine: the bag is played at its recorded rate, and a slower or busier machine makes a method skip or delay scans, which can change its trajectory (the processed-scan ratio in `results.md` shows this). Several methods also vary from run to run on the same machine; in the paper KISS-ICP gave 0.40, 1.27 and 12.88 m on this sequence. Differences within the paper's run-to-run spread are expected. The demo is one run on one sequence: it shows that the pipeline works on your machine, not a re-evaluation of the paper.
 
@@ -184,7 +184,7 @@ Sources are pinned: each Dockerfile fetches the upstream repositories at the com
 | `dlo` | direct_lidar_odometry `11528c0` | MIT | none |
 | `kiss` | KISS-ICP v0.3.0 `460c6f2` | MIT | Sophus 1.22.11 (MIT), oneTBB 2021.8.0 (Apache 2.0), robin-map 1.2.1 (MIT); CMake 3.25.3 binary (BSD 3-Clause, build tool) |
 | `mesh` | SLAMesh `50b4356` | **GPL-3.0** | mesh_tools `95433f1` (BSD 3-Clause), Ceres Solver 2.1.0 (BSD 3-Clause, upstream); lvr2 from the ROS apt package (BSD 3-Clause) |
-| `infra` | frame logger `slambench_tools` (the authors' code) | not chosen yet (`LICENSE_TO_CHOOSE.md`; the `package.xml` inside the published image says MIT) | none |
+| `infra` | frame logger `slambench_tools` (the authors' code) | GPL-3.0-or-later; the `package.xml` inside the published image says MIT, which the authors also grant for that copy (`LICENSES.md`) | none |
 
 Every image also contains Ubuntu 18.04 and ROS 1 Melodic packages (ROS mostly BSD 3-Clause; PCL BSD 3-Clause; Ubuntu packages under many licences, including the GPL), whose terms are in `/usr/share/doc/*/copyright` inside the image. SLAMesh is distributed under the GPL-3.0: its complete source at the pinned commit is in the image (`/ws/src/SLAMesh`), and `env/docker/mesh/Dockerfile` rebuilds it.
 
@@ -250,7 +250,7 @@ Not in this repository (all in the Zenodo package): run outputs (`runs/`, `basel
 
 ## 9. Data, licences and citation
 
-**Licence of this repository: not chosen yet.** See `LICENSE_TO_CHOOSE.md`. Proposed: GPL-3.0 for the code (the SLAMesh configuration files derive from GPL-3.0 files) and CC BY-SA 4.0 for the data (the processed CitrusFarm ground truth must keep that licence). Configuration files, patches and ground truth derived from third-party sources keep their own terms, listed there.
+**Licences of this repository.** The authors' code is under GPL-3.0-or-later (`LICENSE`; the SLAMesh configuration files derive from GPL-3.0 files), and the authors' data and documentation are under CC BY-SA 4.0 (`LICENSE-DATA`; the processed CitrusFarm ground truth must keep that licence). Configuration files, patches and ground truth derived from third-party sources keep their own terms, listed in `LICENSES.md`.
 
 **CitrusFarm.** The demo uses the CitrusFarm dataset: H. Teng, Y. Wang, X. Song and K. Karydis, "Multimodal Dataset for Localization, Mapping and Crop Monitoring in Citrus Tree Farms", *Advances in Visual Computing (ISVC 2023)*, https://doi.org/10.1007/978-3-031-47969-4_44; website https://ucr-robotics.github.io/Citrus-Farm-Dataset/; licence CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/). The demo downloads the original bag from the dataset's own server; this repository redistributes no bag. The processed ground truth in `gt/cf_*` is adapted from CitrusFarm and shared under CC BY-SA 4.0; the changes are listed in `gt/README.md`.
 

@@ -7,7 +7,9 @@ version: "1.0.0"
 date-released: "2026-10-16"
 doi: "10.5281/zenodo.23405930"
 repository-code: "https://github.com/nahueldeniz/lidar-slam-orchards"
-# TODO: add the licence once chosen (see LICENSE_TO_CHOOSE.md), e.g. license: "<SPDX identifier>"
+license:
+  - GPL-3.0-or-later
+  - CC-BY-SA-4.0
 # TODO: add each author's ORCID as  orcid: "https://orcid.org/XXXX-XXXX-XXXX-XXXX"
 authors:
   - given-names: "Nestor"
