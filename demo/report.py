@@ -278,8 +278,10 @@ def how_to_read(refs):
             "the paper.")
     if narrow:
         text += (" " + " and ".join(r["label"] for r in narrow) + " gave the same value to within "
-                 "1 mm in all three runs; their range is therefore very narrow, and on another machine "
-                 "a value about a centimetre outside it is still consistent with the paper.")
+                 "1 mm in the paper's three runs, made on an idle machine with pinned CPUs. Their range is "
+                 "therefore very narrow: without the pinning, or on another machine, they can differ from "
+                 "it by a few centimetres (LeGO-LOAM gave 0.480 and 0.441 m in two unpinned demo runs on "
+                 "the paper's laptop).")
     L.append(text)
     L.append("- The paper reports three runs per method on four CitrusFarm sequences and one Pullally "
              "sequence; the demo is one run on one sequence. It shows that the pipeline works on your "
